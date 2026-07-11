@@ -733,3 +733,7 @@ section{ position:relative; }
 @media (max-width:880px){
   .mission-strip{ grid-template-columns:1fr; }
 }
+
+.brand-mark{ color:var(--vermillion); font-weight:700; }
+.section--dark .brand-mark{ color:var(--gold-light); }
+.cta-banner .brand-mark{ color:var(--gold-light); }
