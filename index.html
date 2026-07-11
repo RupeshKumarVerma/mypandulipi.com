@@ -98,25 +98,31 @@
     </div>
     <div class="products-grid">
       <div class="product-card reveal">
-        <div class="product-media"><img src="assets/manuscript-box.png" alt="Shri Ramcharitmanas Sundarkand pandulipi with wooden cover and gift box"></div>
+        <div class="product-media" data-slideshow>
+          <img src="assets/sundarkand-1.jpg" class="slide active" alt="Shri Ramcharitmanas Sundarkand pandulipi with wooden cover and gift box">
+          <img src="assets/sundarkand-2.jpg" class="slide" alt="Sundarkand pandulipi open pages with red ink Devanagari doha and chaupai">
+        </div>
         <div class="product-body">
           <span class="dev">श्री रामचरितमानस</span>
           <h3>Sundarkand Pandulipi</h3>
           <p>The complete Sundarkand in manuscript form — the kaand most read for courage, protection and Hanuman ji's grace, kept exactly as a path pravachak would want it.</p>
           <div class="product-foot">
-            <span class="price">₹800 <small>/ piece</small></span>
+            <span class="price">₹799 <small>/ piece</small></span>
             <span class="badge">In stock</span>
           </div>
         </div>
       </div>
       <div class="product-card reveal">
-        <div class="product-media"><img src="assets/manuscript-open.jpg" alt="Hanuman Chalisa pandulipi open pages with red ink Devanagari text"></div>
+        <div class="product-media" data-slideshow>
+          <img src="assets/chalisa-1.jpg" class="slide active" alt="Hanuman Chalisa pandulipi with wooden cover, pouch and thread tie">
+          <img src="assets/chalisa-2.jpg" class="slide" alt="Hanuman Chalisa pandulipi open pages with red ink Devanagari chaupai">
+        </div>
         <div class="product-body">
           <span class="dev">हनुमान चालीसा</span>
           <h3>Hanuman Chalisa Pandulipi</h3>
           <p>A pocket-sized companion piece to the Sundarkand — compact enough to carry to satsang, sturdy enough to live on the mandir shelf for years.</p>
           <div class="product-foot">
-            <span class="price">₹800 <small>/ piece</small></span>
+            <span class="price">₹499 <small>/ piece</small></span>
             <span class="badge">In stock</span>
           </div>
         </div>
@@ -260,6 +266,17 @@
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+  document.querySelectorAll('[data-slideshow]').forEach(box=>{
+    const slides = box.querySelectorAll('.slide');
+    if(slides.length < 2) return;
+    let i = 0;
+    setInterval(()=>{
+      slides[i].classList.remove('active');
+      i = (i + 1) % slides.length;
+      slides[i].classList.add('active');
+    }, 3200);
+  });
 </script>
 </body>
 </html>

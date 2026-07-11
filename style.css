@@ -313,8 +313,15 @@ section{ position:relative; }
   aspect-ratio:1/1;
   overflow:hidden;
   background:var(--parchment);
+  position:relative;
 }
 .product-media img{ width:100%; height:100%; object-fit:cover; }
+.product-media[data-slideshow] .slide{
+  position:absolute; inset:0;
+  opacity:0;
+  transition:opacity 1.1s ease;
+}
+.product-media[data-slideshow] .slide.active{ opacity:1; }
 .product-body{ padding:26px 26px 28px; }
 .product-body .dev{ font-size:1.25rem; color:var(--maroon); }
 .product-body h3{ font-size:1.15rem; margin:4px 0 10px; }
