@@ -1,2 +1,2 @@
 # mypandulipi.com
-Static website for Pandulipi — a small Indore-based craft brand creating handcrafted, thread-bound manuscript-style devotional books (Sundarkand, Hanuman Chalisa &amp; more), built for mandir use, gifting, weddings and corporate orders.
+Pandulipi is a small devotional craft brand from Indore, India, creating manuscript-style (pandulipi) books — wood-covered, thread-tied, kraft-paper pages — starting with Sundarkand and Hanuman Chalisa. This repo hosts the static marketing website: product showcase, coming-soon collection, bulk/corporate ordering info, and a short blog on the tradition behind manuscript-style scripture.
