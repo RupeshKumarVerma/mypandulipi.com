@@ -737,3 +737,10 @@ section{ position:relative; }
 .brand-mark{ color:var(--vermillion); font-weight:700; }
 .section--dark .brand-mark{ color:var(--gold-light); }
 .cta-banner .brand-mark{ color:var(--gold-light); }
+
+/* ---------- wide page override (who-we-are) ---------- */
+.page-wide .container{ max-width:1320px; }
+.page-wide .about-hero .headline{ max-width:920px; }
+.page-wide .about-hero .lede{ max-width:780px; }
+.page-wide .founder-card{ padding:44px 40px; }
+.page-wide .founder-card p{ font-size:0.98rem; }
