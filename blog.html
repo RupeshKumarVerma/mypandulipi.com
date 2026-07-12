@@ -13,6 +13,8 @@
 </head>
 <body>
 
+<div class="scroll-progress"><i></i></div>
+
 <nav class="nav">
   <div class="container">
     <a href="index.html" class="nav-logo"><img src="assets/logo-mark-final.png" alt="Pandulipi logo mark" class="mark">Pandulipi</a>
@@ -27,6 +29,7 @@
     </ul>
     <div class="nav-cta">
       <a href="index.html#contact" class="btn btn-outline">Get in touch</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </div>
 </nav>
@@ -125,11 +128,8 @@
   <div class="footer-bottom">© 2026 Pandulipi. Handbound with devotion in Indore.</div>
 </footer>
 
-<script>
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
-</script>
+<button class="to-top" aria-label="Scroll to top">↑</button>
+
+<script src="site.js" defer></script>
 </body>
 </html>
