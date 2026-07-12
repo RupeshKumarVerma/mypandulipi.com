@@ -23,7 +23,7 @@
   --font-display:  'Cormorant Garamond', serif;
   --font-body:     'Poppins', sans-serif;
 
-  --container: 1140px;
+  --container: 1320px;
 }
 
 *,*::before,*::after{ box-sizing:border-box; }
@@ -739,7 +739,6 @@ section{ position:relative; }
 .cta-banner .brand-mark{ color:var(--gold-light); }
 
 /* ---------- wide page override (who-we-are) ---------- */
-.page-wide .container{ max-width:1320px; }
 .page-wide .about-hero .headline{ max-width:920px; }
 .page-wide .about-hero .lede{ max-width:780px; }
 .page-wide .founder-card{ padding:44px 40px; }
