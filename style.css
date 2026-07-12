@@ -333,6 +333,14 @@ section{ position:relative; }
 .product-body .dev{ font-size:1.25rem; color:var(--maroon); }
 .product-body h3{ font-size:1.15rem; margin:4px 0 10px; }
 .product-body p{ font-size:0.9rem; color:var(--ink-soft); margin-bottom:16px; }
+.scent-tag{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.78rem; color:var(--maroon);
+  background:var(--parchment-lt);
+  border:1px solid rgba(122,31,31,0.18);
+  padding:6px 12px; border-radius:20px;
+  margin-bottom:16px;
+}
 .product-foot{
   display:flex; align-items:center; justify-content:space-between;
   padding-top:16px; border-top:1px dashed var(--line);
