@@ -158,10 +158,13 @@ section{ position:relative; }
   height:76px;
 }
 .nav-logo{
-  display:flex; align-items:center;
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-dev);
+  font-size:1.5rem;
+  color:var(--maroon);
 }
-.nav-logo img{
-  height:52px; width:auto;
+.nav-logo .mark{
+  height:40px; width:auto;
   flex:none;
 }
 .nav-links{
@@ -503,7 +506,6 @@ section{ position:relative; }
 }
 .footer-mark{ width:38px; height:38px; flex:none; }
 .footer-wordmark{ height:20px; width:auto; opacity:0.92; }
-.footer-logo-img{ height:56px; width:auto; }
 .footer-links{ display:flex; gap:22px; }
 .footer-links a:hover{ color:var(--gold-light); }
 .footer-bottom{
