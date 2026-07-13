@@ -158,10 +158,13 @@ section{ position:relative; }
   height:76px;
 }
 .nav-logo{
-  display:flex; align-items:center;
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-dev);
+  font-size:1.5rem;
+  color:var(--maroon);
 }
-.nav-logo img{
-  height:54px; width:auto;
+.nav-logo .mark{
+  height:40px; width:auto;
   flex:none;
 }
 .nav-links{
