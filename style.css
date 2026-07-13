@@ -161,7 +161,7 @@ section{ position:relative; }
   display:flex; align-items:center;
 }
 .nav-logo img{
-  height:54px; width:auto;
+  height:64px; width:auto;
   flex:none;
 }
 .nav-links{
