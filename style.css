@@ -897,3 +897,38 @@ section{ position:relative; }
 
 /* ---------- subtle corner watermark on light sections ---------- */
 .section-head{ position:relative; }
+
+/* ---------- top notice marquee bar ---------- */
+.notice-bar{
+  background:var(--maroon-dark);
+  overflow:hidden;
+  padding:9px 0;
+  position:relative;
+}
+.notice-bar::before, .notice-bar::after{
+  content:'';
+  position:absolute; top:0; bottom:0; width:50px; z-index:2;
+  pointer-events:none;
+}
+.notice-bar::before{ left:0; background:linear-gradient(90deg, var(--maroon-dark), transparent); }
+.notice-bar::after{ right:0; background:linear-gradient(270deg, var(--maroon-dark), transparent); }
+.notice-track{
+  display:flex; width:max-content;
+  animation:notice-scroll 24s linear infinite;
+}
+.notice-track:hover{ animation-play-state:paused; }
+.notice-set{ display:flex; align-items:center; flex:none; }
+.notice-set span{
+  white-space:nowrap;
+  padding:0 30px;
+  font-size:0.8rem;
+  letter-spacing:0.01em;
+  color:var(--gold-light);
+}
+@keyframes notice-scroll{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .notice-track{ animation:none; }
+}
