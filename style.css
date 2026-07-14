@@ -328,8 +328,10 @@ section{ position:relative; }
 .product-card:hover{ box-shadow:0 24px 50px -22px rgba(43,27,16,0.25); transform:translateY(-4px); }
 .product-media{
   aspect-ratio:1/1;
+  max-width:300px;
+  margin:28px auto 0;
   background:var(--cream);
-  padding:22px;
+  padding:16px;
   box-sizing:border-box;
 }
 .product-media-frame{
