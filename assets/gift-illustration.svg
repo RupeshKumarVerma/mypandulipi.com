@@ -1,0 +1,72 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="boxFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8A2626"/>
+      <stop offset="100%" stop-color="#5C1616"/>
+    </linearGradient>
+    <linearGradient id="boxLid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9C2E2E"/>
+      <stop offset="100%" stop-color="#6E1C1C"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E3C368"/>
+      <stop offset="50%" stop-color="#C39A2E"/>
+      <stop offset="100%" stop-color="#E3C368"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#F4E8C9" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#F4E8C9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <circle cx="200" cy="190" r="185" fill="url(#glow)"/>
+
+  <!-- box base -->
+  <rect x="95" y="190" width="210" height="140" rx="6" fill="url(#boxFace)"/>
+  <rect x="95" y="190" width="210" height="140" rx="6" fill="none" stroke="#3A1010" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- box lid -->
+  <rect x="80" y="150" width="240" height="55" rx="8" fill="url(#boxLid)"/>
+  <rect x="80" y="150" width="240" height="55" rx="8" fill="none" stroke="#3A1010" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- vertical ribbon -->
+  <rect x="185" y="150" width="30" height="180" fill="url(#ribbon)"/>
+  <!-- horizontal ribbon across lid -->
+  <rect x="80" y="168" width="240" height="22" fill="url(#ribbon)"/>
+
+  <!-- bow -->
+  <g>
+    <path d="M200 150
+             C 160 120, 120 128, 118 158
+             C 116 180, 155 178, 200 152 Z"
+          fill="url(#ribbon)" stroke="#8A6A2E" stroke-width="1.5"/>
+    <path d="M200 150
+             C 240 120, 280 128, 282 158
+             C 284 180, 245 178, 200 152 Z"
+          fill="url(#ribbon)" stroke="#8A6A2E" stroke-width="1.5"/>
+    <ellipse cx="200" cy="152" rx="14" ry="12" fill="#E3C368" stroke="#8A6A2E" stroke-width="1.5"/>
+    <path d="M190 160 L172 196 L188 190 Z" fill="url(#ribbon)" stroke="#8A6A2E" stroke-width="1"/>
+    <path d="M210 160 L228 196 L212 190 Z" fill="url(#ribbon)" stroke="#8A6A2E" stroke-width="1"/>
+  </g>
+
+  <!-- small diya, bottom left -->
+  <g transform="translate(58,300)">
+    <path d="M0 14 Q 20 34 40 14 Q 32 26 20 26 Q 8 26 0 14 Z" fill="#C39A2E"/>
+    <ellipse cx="20" cy="13" rx="20" ry="7" fill="#E3C368"/>
+    <ellipse cx="20" cy="13" rx="20" ry="7" fill="none" stroke="#8A6A2E" stroke-width="1"/>
+    <path d="M20 -8 C 15 0, 17 6, 20 6 C 23 6, 25 0, 20 -8 Z" fill="#F4A93B"/>
+    <path d="M20 -3 C 17 1, 18 4, 20 4 C 22 4, 23 1, 20 -3 Z" fill="#FFE1A8"/>
+  </g>
+
+  <!-- small lotus flourish, top right -->
+  <g transform="translate(330,70)" opacity="0.9">
+    <path d="M0 20 C -14 10, -14 -8, 0 -14 C 14 -8, 14 10, 0 20 Z" fill="#C39A2E" opacity="0.85"/>
+    <path d="M0 20 C -6 8, -6 -4, 0 -10 C 6 -4, 6 8, 0 20 Z" fill="#E3C368"/>
+  </g>
+
+  <!-- sparkle accents -->
+  <g fill="#E3C368">
+    <path d="M60 90 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 Z" opacity="0.85"/>
+    <path d="M345 230 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3 Z" opacity="0.7"/>
+  </g>
+</svg>
