@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.mypandulipi.com/</loc>
+    <loc>https://mypandulipi.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.mypandulipi.com/bulk.html</loc>
+    <loc>https://mypandulipi.com/bulk.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.mypandulipi.com/who-we-are.html</loc>
+    <loc>https://mypandulipi.com/who-we-are.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.mypandulipi.com/blog.html</loc>
+    <loc>https://mypandulipi.com/blog.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
