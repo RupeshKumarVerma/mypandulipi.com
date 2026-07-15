@@ -571,6 +571,7 @@ section{ position:relative; }
   font-family:var(--font-dev); font-size:1.15rem; color:var(--parchment-lt);
 }
 .footer-mark{ width:38px; height:38px; flex:none; }
+.footer-mark-new{ height:44px; width:auto; flex:none; }
 .footer-wordmark{ height:20px; width:auto; opacity:0.92; }
 .footer-links{ display:flex; gap:22px; }
 .footer-links a:hover{ color:var(--gold-light); }
