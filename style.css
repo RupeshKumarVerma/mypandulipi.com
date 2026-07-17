@@ -155,7 +155,7 @@ section{ position:relative; }
 }
 .nav .container{
   display:flex; align-items:center; justify-content:space-between;
-  height:110px;
+  height:auto;
 }
 .nav-logo{
   display:flex; align-items:center;
@@ -163,6 +163,7 @@ section{ position:relative; }
 .nav-logo img{
   height:92px; width:auto;
   flex:none;
+  padding:8px;
 }
 .nav-links{
   display:flex; gap:32px;
