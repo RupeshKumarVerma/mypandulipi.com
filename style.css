@@ -155,13 +155,13 @@ section{ position:relative; }
 }
 .nav .container{
   display:flex; align-items:center; justify-content:space-between;
-  height:110px;
+  height:132px;
 }
 .nav-logo{
   display:flex; align-items:center;
 }
 .nav-logo img{
-  height:92px; width:auto;
+  height:112px; width:auto;
   flex:none;
 }
 .nav-links{
