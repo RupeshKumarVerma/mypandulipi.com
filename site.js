@@ -152,12 +152,19 @@
 
   /* ---------- header, progress, to-top ---------- */
   var hdr = document.querySelector('.hdr');
+  var darkSecs = Array.prototype.slice.call(document.querySelectorAll('.night, .foot'));
   var bar = document.querySelector('.progress i');
   var totop = document.querySelector('.totop');
   var ticking = false;
   function onScroll() {
     var y = window.scrollY || window.pageYOffset;
-    if (hdr) hdr.classList.toggle('scrolled', y > 24);
+    if (hdr) {
+      hdr.classList.toggle('scrolled', y > 24);
+      var mid = hdr.getBoundingClientRect().top + hdr.offsetHeight / 2;
+      var dark = false;
+      darkSecs.forEach(function (s) { var r = s.getBoundingClientRect(); if (r.top <= mid && r.bottom >= mid) dark = true; });
+      hdr.classList.toggle('on-dark', dark);
+    }
     if (bar) {
       var h = document.documentElement.scrollHeight - window.innerHeight;
       bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
