@@ -310,7 +310,7 @@ body.menu-open{ overflow:hidden; }
 
 /* ---------- devanagari ribbon ---------- */
 .ribbon{ background:var(--paper-2); border-block:1px solid var(--line-l); overflow:hidden; padding:26px 0; }
-.ribbon-track{ display:flex; width:max-content; animation:marquee 60s linear infinite reverse; }
+.ribbon-track{ display:flex; width:max-content; animation:marquee 60s linear infinite; }
 .ribbon-track span{ font-family:var(--f-deva); font-size:clamp(1.6rem, 3vw, 2.4rem); color:var(--ink); white-space:nowrap; padding:0 26px; display:inline-flex; align-items:center; gap:52px; }
 .ribbon-track span::after{ content:'✦'; font-size:.55em; color:var(--gold); }
 
