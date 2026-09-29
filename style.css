@@ -653,7 +653,6 @@ body.menu-open{ overflow:hidden; }
 .hdr.on-dark .links a{ color:rgba(255,255,255,.88); }
 .hdr.on-dark .links a:hover{ color:#fff; background:rgba(255,255,255,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.14); }
 .hdr.on-dark .links a[aria-current="page"]{ color:var(--gold-2); }
-.hdr.on-dark .brand img{ filter:invert(1) hue-rotate(180deg) brightness(1.15) saturate(1.1); }
 
 /* ===== glass v3: more see-through ===== */
 .capsule, .hdr.scrolled .capsule{
@@ -682,3 +681,11 @@ body.menu-open{ overflow:hidden; }
 .hdr.on-dark .capsule::before{ background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,0)); }
 .hdr.on-dark .links a{ color:#fff; text-shadow:0 1px 8px rgba(0,0,0,.35); }
 .links a{ text-shadow:0 1px 6px rgba(255,255,255,.5); }
+
+/* logo always keeps its original colours; over dark glass it sits on a small cream chip */
+.brand{ display:block; margin-left:-14px; padding:3px 14px; border-radius:999px; transition:background .45s ease, box-shadow .45s ease; }
+.brand img{ filter:none !important; }
+.hdr.on-dark .brand{
+  background:radial-gradient(120% 140% at 50% 30%, rgba(255,251,242,.96), rgba(246,239,225,.88));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 4px 16px -6px rgba(0,0,0,.5);
+}
