@@ -771,3 +771,136 @@ body.menu-open{ overflow:hidden; }
 .stock--silver .scard-top--photo{ background:#F2EADD; }
 .stock--silver .scard-top:not(.scard-top--photo)::before{ display:none; }
 .stock--silver .scard-top--photo .slide{ object-fit:contain; }
+
+/* =========================================================
+   LIGHTER TYPE & SCALE (v13): calmer sizes, lighter weights,
+   less padding, smaller media. Overrides everything above.
+   ========================================================= */
+body{ font-size:15.5px; line-height:1.68; }
+.sec{ padding:92px 0; }
+.sec--tight{ padding:72px 0; }
+.sec-head{ margin-bottom:44px; max-width:680px; }
+.sec-head .display{ margin-bottom:16px; }
+.sec-head .display::after{ margin-top:18px; }
+.sec-head .display.written::after{ width:96px; }
+.eyebrow{ font-size:.68rem; letter-spacing:.24em; margin-bottom:14px; }
+.display{ font-size:clamp(1.85rem, 3.1vw, 2.8rem); font-weight:300; line-height:1.12; letter-spacing:-.012em; }
+.lede, .hero .lede{ font-size:1rem; line-height:1.7; }
+.hero .lede{ margin-bottom:30px; max-width:52ch; }
+
+/* header */
+.brand img{ height:46px; }
+.links a{ font-size:.84rem; padding:8px 12px; }
+.capsule .btn-sm{ padding:9px 16px; font-size:.8rem; }
+
+/* hero */
+.hero{ min-height:88vh; padding:calc(var(--hdr) + 48px) 0 88px; }
+.hero-title{ font-size:clamp(2.3rem, 4.4vw, 4rem); font-weight:300; line-height:1.06; letter-spacing:-.02em; margin-bottom:22px; }
+.hero-grid{ gap:56px; grid-template-columns:1.1fr .9fr; }
+.arch-wrap{ max-width:360px; }
+.facts{ gap:32px; margin-top:40px; padding-top:22px; }
+.fact b{ font-size:1.45rem; font-weight:300; }
+.fact span{ font-size:.78rem; }
+.btn{ padding:12px 22px; font-size:.88rem; }
+.btn-lg{ padding:14px 26px; font-size:.92rem; }
+.btn-sm{ padding:9px 16px; font-size:.8rem; }
+.float-badge{ font-size:.8rem; padding:11px 15px; }
+.float-badge b{ font-size:.95rem; }
+.watermark{ font-size:18vw; }
+
+/* ribbon + manifesto + verse */
+.ribbon{ padding:18px 0; }
+.ribbon-track span{ font-size:clamp(1.2rem, 2vw, 1.6rem); gap:40px; padding:0 20px; }
+.manifesto{ padding:100px 0; }
+.manifesto-text{ font-size:clamp(1.4rem, 2.5vw, 2.15rem); font-weight:300; line-height:1.4; max-width:860px; }
+.verse-band{ padding:96px 0; }
+.verse{ font-size:clamp(1.3rem, 2.3vw, 1.9rem); margin-bottom:24px; }
+.verse-meaning{ font-size:clamp(.98rem, 1.3vw, 1.1rem); }
+
+/* why */
+.why{ padding:34px 40px 34px 0; grid-template-columns:64px 1fr; gap:18px; }
+.why:nth-child(even){ padding:34px 0 34px 40px; }
+.why-num{ font-size:2.4rem; }
+.why h3{ font-size:1.25rem; margin-bottom:8px; }
+.why p{ font-size:.95rem; }
+
+/* collection features */
+.feature{ gap:72px; }
+.feature + .feature{ margin-top:88px; }
+.feature-media .arch-wrap{ max-width:320px; }
+.feature-deva{ font-size:1.1rem; }
+.feature h3{ font-size:clamp(1.7rem, 2.6vw, 2.3rem); font-weight:300; margin-bottom:14px; }
+.feature p{ font-size:.98rem; }
+.tags{ margin:20px 0 26px; gap:8px; }
+.tag{ font-size:.78rem; padding:6px 13px; }
+
+/* stock grid */
+.more-head{ margin:100px 0 28px; }
+.more-head h3{ font-size:clamp(1.45rem, 2.2vw, 1.9rem); font-weight:300; }
+.stock{ gap:20px; }
+.scard-body{ padding:22px 22px 20px; }
+.scard h4{ font-size:1.25rem; margin-bottom:8px; }
+.scard p{ font-size:.9rem; }
+.scard--wide h4{ font-size:1.5rem; }
+.scard--wide .scard-body{ padding:30px 34px 26px; }
+.scard-top .deva{ font-size:1.4rem; }
+.photo-label{ font-size:.9rem !important; }
+.silver-lede{ font-size:.98rem; }
+
+/* coming soon, bulk split, journal, contact */
+.doors{ gap:20px; max-width:980px; margin:0 auto; }
+.door .deva{ font-size:clamp(1.15rem, 1.7vw, 1.4rem); }
+.split-a{ padding:48px 46px; }
+.split-b{ padding:48px 42px; }
+.split h3{ font-size:clamp(1.5rem, 2.3vw, 2rem); font-weight:300; }
+.tier b{ font-size:1.2rem; }
+.tier{ padding:12px 0; }
+.post-num{ font-size:2rem; }
+.post h3{ font-size:1.2rem; }
+.post p{ font-size:.9rem; }
+.contact{ padding:100px 0 96px; }
+.crow{ padding:18px; }
+.crow .ic{ width:40px; height:40px; }
+
+/* inner pages */
+.phero{ padding:calc(var(--hdr) + 72px) 0 84px; }
+.phero .hero-title{ font-size:clamp(2.1rem, 4vw, 3.5rem); }
+.icard{ padding:26px 24px; }
+.icard .deva{ font-size:1.5rem; margin-bottom:12px; }
+.icard h3{ font-size:1.18rem; }
+.icard p{ font-size:.9rem; }
+.cards4 .icard .deva{ font-size:1.3rem; }
+.cards4 .icard h3{ font-size:1.08rem; }
+.step-num{ width:56px; height:56px; font-size:1.5rem; }
+.step h3{ font-size:1.1rem; }
+.founder{ padding:38px 36px; }
+.founder h2{ font-size:1.65rem; font-weight:300; }
+.mono{ width:80px; height:98px; font-size:1.4rem; }
+.founder p{ font-size:.95rem; }
+.vcard .verse{ font-size:clamp(1.1rem, 1.8vw, 1.4rem); }
+.article{ padding:56px 0; gap:44px; grid-template-columns:150px 1fr; }
+.a-index{ font-size:3.6rem; }
+.article h2{ font-size:clamp(1.45rem, 2.2vw, 1.9rem); font-weight:300; margin-bottom:16px; }
+.article p{ font-size:.98rem; line-height:1.8; }
+.foot{ padding:72px 0 32px; }
+.foot-mark{ font-size:clamp(1.6rem, 2.6vw, 2.1rem); }
+.foot p, .foot li{ font-size:.88rem; }
+
+@media (max-width:980px){
+  .hero{ min-height:0; }
+  .hero-grid{ grid-template-columns:1fr; gap:64px; }
+}
+@media (max-width:640px){
+  body{ font-size:15px; }
+  .sec{ padding:68px 0; }
+  .hero-title{ font-size:2.2rem; }
+  .phero .hero-title{ font-size:2rem; }
+  .display{ font-size:1.75rem; }
+  .manifesto{ padding:76px 0; }
+  .manifesto-text{ font-size:1.3rem; }
+  .why, .why:nth-child(even){ padding:26px 0; grid-template-columns:52px 1fr; }
+  .why-num{ font-size:2rem; }
+  .article{ grid-template-columns:1fr; gap:10px; padding:44px 0; }
+  .a-index{ font-size:2.6rem; }
+  .split-a, .split-b{ padding:36px 22px; }
+}
