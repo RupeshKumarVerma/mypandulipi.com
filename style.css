@@ -754,3 +754,20 @@ body.menu-open{ overflow:hidden; }
 .scard--span2{ grid-column:span 2; }
 .scard--span2 .scard-top{ min-height:190px; }
 @media (max-width:640px){ .scard--span2{ grid-column:auto; } }
+
+/* silver collection */
+.stock--silver{ grid-template-columns:repeat(2,1fr); }
+.silver-lede{ color:var(--ink-2); font-size:1.08rem; margin:-18px 0 30px; max-width:60ch; }
+.stock--silver .scard-top--photo{ aspect-ratio:16/11; }
+.stock--silver .scard-top:not(.scard-top--photo){
+  min-height:0; aspect-ratio:16/11;
+  background:radial-gradient(260px 200px at 50% 35%, rgba(255,255,255,.2), transparent 70%), linear-gradient(160deg,#6E7479,#2E3337 70%);
+  color:#F4F6F8;
+}
+.stock--silver .scard-top:not(.scard-top--photo)::before{ border-color:rgba(255,255,255,.35); }
+.stock--silver .scard-top small{ color:rgba(244,246,248,.75); }
+.scard--wide.scard--more .scard-top{ min-height:200px; }
+@media (max-width:640px){ .stock--silver{ grid-template-columns:1fr; } }
+.stock--silver .scard-top--photo{ background:#F2EADD; }
+.stock--silver .scard-top:not(.scard-top--photo)::before{ display:none; }
+.stock--silver .scard-top--photo .slide{ object-fit:contain; }
