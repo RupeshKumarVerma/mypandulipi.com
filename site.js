@@ -234,3 +234,117 @@
   /* ---------- final sync after images load ---------- */
   window.addEventListener('load', function () { onScroll(); });
 })();
+
+/* ---------- price reveal scratch card (trial) ---------- */
+(function () {
+  var cards = document.querySelectorAll('[data-reveal]');
+  if (!cards.length) return;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function paintFoil(btn) {
+    var c = btn.querySelector('.scratch-foil');
+    var r = btn.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
+    var x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var w = r.width, h = r.height;
+    var g = x.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, '#B8862E'); g.addColorStop(.3, '#F2D08A'); g.addColorStop(.55, '#C99A45');
+    g.addColorStop(.8, '#F6DFA4'); g.addColorStop(1, '#A87828');
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    for (var i = 0; i < 900; i++) {            // foil grain
+      x.fillStyle = 'rgba(' + (Math.random() < .5 ? '255,248,225' : '110,70,15') + ',' + (Math.random() * .16).toFixed(3) + ')';
+      x.fillRect(Math.random() * w, Math.random() * h, 1.4, 1.4);
+    }
+    x.strokeStyle = 'rgba(255,245,215,.18)'; x.lineWidth = 1;
+    for (var k = -h; k < w; k += 9) { x.beginPath(); x.moveTo(k, h); x.lineTo(k + h, 0); x.stroke(); }
+    x.strokeStyle = 'rgba(90,55,10,.35)'; x.setLineDash([4, 4]);
+    x.strokeRect(7.5, 7.5, w - 15, h - 15); x.setLineDash([]);
+    // coin icon
+    var cx = 44, cy = h / 2;
+    x.fillStyle = 'rgba(90,55,10,.85)'; x.beginPath(); x.arc(cx, cy, 17, 0, 6.283); x.fill();
+    x.fillStyle = '#F6DFA4'; x.font = '600 19px "DM Sans", system-ui, sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('₹', cx, cy + 1);
+    x.textAlign = 'left'; x.fillStyle = '#3A2408';
+    x.font = '500 21px Fraunces, Georgia, serif'; x.fillText('Reveal price', 74, cy - 8);
+    x.fillStyle = 'rgba(58,36,8,.75)'; x.font = '500 11px "DM Sans", system-ui, sans-serif';
+    x.fillText('TAP TO SCRATCH  ✦', 75, cy + 15);
+  }
+
+  function scratchAway(btn, done) {
+    var c = btn.querySelector('.scratch-foil'), x = c.getContext('2d');
+    var w = c.width, h = c.height;
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.globalCompositeOperation = 'destination-out';
+    x.lineCap = 'round'; x.lineJoin = 'round'; x.lineWidth = h * .34;
+    var pts = [], rows = 4;
+    for (var r = 0; r < rows; r++) {
+      var y = h * (.12 + r * .25);
+      pts.push(r % 2 ? [w * 1.05, y] : [-w * .05, y]);
+      pts.push(r % 2 ? [-w * .05, y + h * .12] : [w * 1.05, y + h * .12]);
+    }
+    var total = reduce ? 1 : 900, t0 = performance.now(), prev = pts[0];
+    function step(now) {
+      var p = Math.max(0, Math.min(1, (now - t0) / total)), f = p * (pts.length - 1), i = Math.floor(f), s = f - i;
+      var a = pts[i], b = pts[Math.min(i + 1, pts.length - 1)];
+      var cur = [a[0] + (b[0] - a[0]) * s + (Math.random() - .5) * 6, a[1] + (b[1] - a[1]) * s + (Math.random() - .5) * 6];
+      x.beginPath(); x.moveTo(prev[0], prev[1]); x.lineTo(cur[0], cur[1]); x.stroke(); prev = cur;
+      if (p < 1) requestAnimationFrame(step);
+      else { c.style.opacity = '0'; setTimeout(function () { c.style.display = 'none'; }, 500); done(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  var dlg = document.createElement('dialog');
+  dlg.className = 'rr-dialog';
+  dlg.innerHTML =
+    '<form class="rr-box" method="dialog" novalidate>' +
+    '<button class="rr-close" type="button" aria-label="Close">×</button>' +
+    '<p class="rr-deva">॥ राधे राधे ॥</p>' +
+    '<h3>Unlock the price</h3>' +
+    '<p>Type <b>Radhe Radhe</b> below to reveal the price.</p>' +
+    '<input class="rr-input" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Radhe Radhe" aria-label="Type Radhe Radhe">' +
+    '<div class="rr-hint" aria-live="polite"></div>' +
+    '<button class="rr-go" type="submit">Reveal price</button>' +
+    '</form>';
+  document.body.appendChild(dlg);
+  var form = dlg.querySelector('form'), input = dlg.querySelector('.rr-input'), hint = dlg.querySelector('.rr-hint');
+  var active = null;
+
+  function ok(v) {
+    v = (v || '').toLowerCase().replace(/[^a-zऀ-ॿ]/g, '');
+    return /^(radhey?){2}$/.test(v) || v === 'राधेराधे';
+  }
+  function close() { if (dlg.open) dlg.close(); }
+  dlg.querySelector('.rr-close').addEventListener('click', close);
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
+  input.addEventListener('input', function () { input.classList.remove('is-wrong'); hint.textContent = ''; });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!ok(input.value)) {
+      input.classList.remove('is-wrong'); void input.offsetWidth; input.classList.add('is-wrong');
+      hint.textContent = 'Please type: Radhe Radhe';
+      input.focus(); return;
+    }
+    close();
+    var btn = active; if (!btn) return;
+    btn.querySelector('.scratch-price span').textContent = atob(btn.getAttribute('data-p'));
+    btn.setAttribute('aria-label', 'Price revealed');
+    scratchAway(btn, function () { btn.classList.add('is-open', 'is-shine'); });
+  });
+
+  cards.forEach(function (btn) {
+    paintFoil(btn);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!btn.classList.contains('is-open')) paintFoil(btn); });
+    btn.addEventListener('click', function () {
+      if (btn.classList.contains('is-open') || btn.dataset.busy) return;
+      active = btn; input.value = ''; hint.textContent = ''; input.classList.remove('is-wrong');
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      setTimeout(function () { input.focus(); }, 60);
+    });
+  });
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { cards.forEach(function (b) { if (!b.classList.contains('is-open')) paintFoil(b); }); }, 150);
+  });
+})();
