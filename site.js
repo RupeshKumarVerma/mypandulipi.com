@@ -205,13 +205,31 @@
     var slides = box.querySelectorAll('.slide');
     if (slides.length < 2 || reduce) return;
     var idx = 0;
+    var card = box.closest('.showcase-card');
+    var plate = box.hasAttribute('data-caption') && card ? card.querySelector('.plate-name') : null;
+    var bar = plate ? card.querySelector('.showcase-bar') : null;
+    function runBar() { if (!bar) return; bar.classList.remove('run'); void bar.offsetWidth; bar.classList.add('run'); }
+    function caption(i) {
+      if (!plate) return;
+      var s = slides[i];
+      plate.classList.add('swap');
+      setTimeout(function () {
+        plate.querySelector('[data-cap-deva]').textContent = s.getAttribute('data-deva');
+        plate.querySelector('[data-cap-name]').textContent = s.getAttribute('data-name');
+        card.querySelector('[data-cap-i]').textContent = (i < 9 ? '0' : '') + (i + 1);
+        plate.classList.remove('swap');
+      }, 450);
+    }
+    var delay = k * 900;
+    if (bar) { bar.style.setProperty('--d', '0s'); setTimeout(runBar, 0); delay = 0; }
     setTimeout(function () {
       setInterval(function () {
         slides[idx].classList.remove('active');
         idx = (idx + 1) % slides.length;
         slides[idx].classList.add('active');
+        caption(idx); runBar();
       }, 3800);
-    }, k * 900);
+    }, delay);
   });
 
   /* ---------- embers ---------- */
