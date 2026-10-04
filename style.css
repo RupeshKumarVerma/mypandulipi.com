@@ -974,3 +974,43 @@ body{ font-size:15.5px; line-height:1.68; }
 .ph-empty .deva{ font-size:2.2rem; color:var(--sindoor-2); line-height:1.3; }
 .ph-empty small{ font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--ink-2); }
 .stock--silver .scard-top:not(.scard-top--photo){ aspect-ratio:1/1; }
+
+/* ===== Special Offer: an ivory campaign within the existing collection theme ===== */
+.special-offer{ border-bottom:1px solid var(--line-l); }
+.special-offer .sec-head{ margin-bottom:36px; }
+.offer-grid{ display:grid; grid-template-columns:minmax(0, .95fr) minmax(0, 1fr); gap:clamp(32px, 5vw, 72px); align-items:center; }
+.offer-art{ display:block; max-width:460px; width:100%; margin:0 auto; border-radius:20px; overflow:hidden; background:var(--paper-3); border:1px solid rgba(214,166,80,.35); box-shadow:0 24px 52px -32px rgba(60,35,15,.35); }
+.offer-art img{ width:100%; height:auto; }
+.offer-copy{ max-width:480px; min-width:0; }
+.offer-copy .eyebrow{ margin-bottom:18px; }
+.offer-deva{ color:var(--sindoor-2); font-size:1.08rem; line-height:1.65; margin:0 0 12px; }
+.offer-copy h3{ font-family:var(--f-display); font-size:clamp(1.7rem, 2.7vw, 2.35rem); font-weight:300; line-height:1.15; margin-bottom:18px; }
+.offer-copy h3 em{ color:var(--sindoor); }
+.offer-description{ color:var(--ink-2); font-size:.98rem; max-width:43ch; margin-bottom:24px; }
+.offer-pricing{ padding:20px 0; border-top:1px solid var(--line-l); border-bottom:1px solid var(--line-l); }
+.offer-pack{ display:block; font-size:.82rem; font-weight:500; color:var(--ink-2); margin-bottom:8px; }
+.offer-price-row{ display:flex; align-items:baseline; flex-wrap:wrap; gap:10px 20px; }
+.offer-price{ font-family:var(--f-display); font-size:clamp(2.1rem, 3.4vw, 2.8rem); font-weight:400; line-height:1.2; color:var(--ink); font-variant-numeric:lining-nums; }
+.offer-regular{ font-size:.84rem; color:var(--ink-2); }
+.offer-regular s{ margin-left:4px; text-decoration-thickness:1px; }
+.offer-saving{ display:block; color:var(--peacock); font-size:.85rem; font-weight:600; margin-top:6px; }
+.offer-coupon{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:20px 0; font-size:.88rem; color:var(--ink-2); }
+.offer-coupon strong{ border:1px dashed rgba(169,54,32,.4); border-radius:8px; padding:5px 14px; font-weight:600; color:var(--sindoor-2); background:var(--paper-3); letter-spacing:.04em; user-select:all; }
+.offer-order{ max-width:100%; white-space:normal; text-align:center; }
+.offer-note{ font-size:.78rem; color:var(--ink-2); margin:14px 0 0; }
+.offer-note b{ font-weight:500; }
+.offer-note a{ text-decoration:underline; text-underline-offset:3px; }
+@media (max-width:1100px){
+  .links, .capsule > .btn{ display:none; }
+  .burger{ display:block; }
+}
+@media (max-width:760px){
+  .offer-grid{ grid-template-columns:1fr; gap:32px; }
+  .offer-art{ max-width:400px; }
+  .offer-copy{ max-width:480px; width:100%; margin:0 auto; }
+}
+@media (max-width:640px){
+  .special-offer .sec-head{ margin-bottom:28px; }
+  .offer-deva{ font-size:1rem; }
+  .offer-order{ width:100%; }
+}
