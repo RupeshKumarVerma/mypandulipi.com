@@ -68,7 +68,8 @@ def price_block(key):
 def update_index():
     p = ROOT / "index.html"
     html = p.read_text()
-    html = re.sub(r"<!-- PRICE:[^>]*-->.*?<!-- /PRICE -->", "", html, flags=re.S)
+    html = re.sub(r"\n[ \t]*<!-- PRICE:[^>]*-->.*?<!-- /PRICE -->", "", html, flags=re.S)
+    html = re.sub(r"\n[ \t]+\n(?=[ \t]*<div class=\"(buy rv|scard-foot)\">)", "\n", html)
 
     # Feature blocks (Sundarkand, Gita): insert before <div class="buy rv">
     def feat(m):
