@@ -9,7 +9,7 @@ Pandulipi Sakhi is the storefront’s ivory-and-brown floating shopping guide. I
 - Reads product names, images, MRP and selling prices from `index.html`, and quantity tiers from `bulk.html`. It fetches these pages on other storefront pages. No independent price list is hardcoded in the widget.
 - Reads the Durga combo’s quantity, total and coupon from the Special Offer section.
 - Supports quantity totals, budget suggestions, gifting follow-ups and catalogue-grounded FAQs.
-- Opens an editable WhatsApp enquiry to **+91 8982659046**, including the selected product, quantity and gifting purpose. It does not send the message or place the order automatically.
+- Opens an editable WhatsApp enquiry to **+91 8982659046**, including the selected product, quantity, gifting purpose and latest enquiry. All response links and WhatsApp suggestion buttons open WhatsApp directly. Links within older responses keep the product and quantity shown in that response. It does not send the message or place the order automatically.
 - Does not store chats, collect payment data or send conversations to an AI provider.
 
 This version is an automated catalogue/FAQ guide, not a generative AI service. Unknown questions, edition-specific requests, mixed-order quotations and private order enquiries go to the team on WhatsApp. A future generative integration needs a secure server endpoint with server-side credentials and authoritative price validation; do not add an API key to these browser files.

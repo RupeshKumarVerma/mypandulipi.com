@@ -23,7 +23,7 @@
     ganesh: ['ganesh', 'ganesha', 'ganpati', 'गणेश', 'गणपति'], surya: ['surya', 'सूर्य'],
     aarti: ['aarti', 'arti', 'aarati', 'आरती'], bhaktamar: ['bhaktamar', 'bhaktambar', 'bhaktambhar', 'भक्तामर', 'भक्ताम्बर']
   };
-  const state = { products: [], tiers: {}, offer: null, loaded: false, loading: null, selected: null, quantity: null, awaiting: null, purpose: '', hindi: false, busy: false };
+  const state = { products: [], tiers: {}, offer: null, loaded: false, loading: null, selected: null, quantity: null, awaiting: null, purpose: '', lastQuestion: '', hindi: false, busy: false };
   const say = (en, hi) => state.hindi && hi ? hi : en;
   const wa = message => 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
   function enquiry() {
@@ -31,11 +31,12 @@
     if (state.selected) message += '\nProduct: ' + state.selected.name;
     if (state.quantity) message += '\nQuantity: ' + state.quantity;
     if (state.purpose) message += '\nPurpose: ' + state.purpose;
+    if (state.lastQuestion) message += '\nEnquiry: ' + state.lastQuestion;
     if (state.selected && state.offer && state.selected.family === 'durga' && state.quantity === state.offer.quantity) message += '\nPlease check the ' + state.offer.coupon + ' combo offer.';
     return message + '\nPlease confirm availability, final pricing and delivery charges.';
   }
   const css = document.createElement('link');
-  css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=2'); document.head.append(css);
+  css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=3'); document.head.append(css);
   const root = document.createElement('div'); root.id = 'pandulipi-sakhi-root';
   root.innerHTML = `
     <button id="ps-launch" type="button" aria-expanded="false" aria-controls="ps-panel" aria-label="Open Pandulipi Sakhi shopping assistant">
@@ -53,6 +54,14 @@
     </section>`;
   document.body.append(root); document.body.classList.add('sakhi-ready');
   const $ = id => root.querySelector('#' + id);
+  function whatsappLink(label, className = '') {
+    const link = document.createElement('a');
+    // Keep this response's product/quantity even if the conversation changes later.
+    link.href = wa(enquiry());
+    link.target = '_blank'; link.rel = 'noopener noreferrer';
+    link.textContent = label; link.className = className;
+    return link;
+  }
   function refreshLink() { $('ps-whatsapp').href = wa(enquiry()); }
   function add(message, who = 'bot') {
     const bubble = document.createElement('div'); bubble.className = 'ps-bubble ps-' + who;
@@ -64,7 +73,11 @@
   function scroll() { $('ps-messages').scrollTop = $('ps-messages').scrollHeight; refreshLink(); }
   function chips(items) {
     $('ps-quick').replaceChildren();
-    items.forEach(item => { const b = document.createElement('button'); b.type = 'button'; b.textContent = item; b.addEventListener('click', () => send(item)); $('ps-quick').append(b); });
+    items.forEach(item => {
+      if (/whatsapp/i.test(item)) { $('ps-quick').append(whatsappLink(item)); return; }
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = item;
+      b.addEventListener('click', () => send(item)); $('ps-quick').append(b);
+    });
   }
   function homeChips() { chips(state.hindi ? ['उत्पाद देखें', 'उपहार सुझाव', 'थोक ऑर्डर', 'डिलीवरी'] : ['Browse products', 'Gift suggestions', 'Bulk order', 'Delivery']); }
   function greeting() {
@@ -80,7 +93,7 @@
       const image = card.querySelector('img');
       const description = card.querySelector('.feature-copy > p:not(.feature-deva),.scard-body > p');
       const priceKey = (card.innerHTML.match(/<!--\s*PRICE:([\w-]+)/) || [])[1];
-      return { name, price, mrp: amount(card.querySelector('.price-mrp')), description: text(description), tags: [...card.querySelectorAll('.tag')].map(text), family: family(name), silver: /silver/i.test(name), priceKey, image: image ? site(image.getAttribute('src')) : null, url: site('index.html#' + (card.id || 'collection')) };
+      return { name, price, mrp: amount(card.querySelector('.price-mrp')), description: text(description), tags: [...card.querySelectorAll('.tag')].map(text), family: family(name), silver: /silver/i.test(name), priceKey, image: image ? site(image.getAttribute('src')) : null };
     }).filter(p => p.name && Number.isFinite(p.price) && p.price > 0);
   }
   function parseBulk(doc) {
@@ -173,7 +186,7 @@
       if (qty === o.quantity) reply += '\n' + say('With this coupon, the combo product total is ', 'इस कूपन के साथ कॉम्बो का कुल उत्पाद मूल्य ') + money(o.price) + '.';
     }
     const bubble = add(reply);
-    const a = document.createElement('a'); a.href = p.url; a.textContent = say('View product on website ↗', 'वेबसाइट पर उत्पाद देखें ↗'); a.className = 'ps-inline-link'; bubble.append(a);
+    bubble.append(whatsappLink(say('Enquire on WhatsApp ↗', 'WhatsApp पर पूछें ↗'), 'ps-inline-link'));
     chips(qty ? [say('Order on WhatsApp', 'WhatsApp पर ऑर्डर'), say('Delivery', 'डिलीवरी'), say('Browse products', 'उत्पाद देखें')] : [say('1 copy', '1 पीस'), say('10 copies', '10 पीस'), say('Bulk pricing', 'थोक मूल्य')]);
   }
   function offerReply() {
@@ -271,6 +284,7 @@
   async function send(value) {
     const raw = String(value || '').trim().slice(0, 500);
     if (!raw || state.busy) return;
+    state.lastQuestion = raw;
     state.busy = true; $('ps-send').disabled = true; $('ps-input').value = ''; add(raw, 'user');
     $('ps-messages').setAttribute('aria-busy', 'true');
     let loading;
@@ -296,6 +310,6 @@
   root.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ps-panel').hidden) { e.stopPropagation(); setOpen(false); } });
   $('ps-form').addEventListener('submit', e => { e.preventDefault(); send($('ps-input').value); });
   $('ps-language').addEventListener('click', () => { state.hindi = !state.hindi; updateLanguage(); greeting(); });
-  $('ps-reset').addEventListener('click', () => { if (state.busy) return; state.selected = null; state.quantity = null; state.purpose = ''; state.awaiting = null; $('ps-messages').replaceChildren(); greeting(); });
+  $('ps-reset').addEventListener('click', () => { if (state.busy) return; state.selected = null; state.quantity = null; state.purpose = ''; state.lastQuestion = ''; state.awaiting = null; $('ps-messages').replaceChildren(); greeting(); });
   greeting(); refreshLink();
 })();

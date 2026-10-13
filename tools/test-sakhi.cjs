@@ -18,6 +18,16 @@ const money = n => '₹' + n.toLocaleString('en-IN');
       await page.locator('#ps-input').fill(message);
       await page.locator('#ps-input').press('Enter');
       await page.locator('#ps-send:not([disabled])').waitFor();
+      // Every navigational link inside Sakhi must go directly to WhatsApp.
+      const links = await page.locator('#pandulipi-sakhi-root a').evaluateAll(nodes => nodes.map(a => ({href:a.href,target:a.target,rel:a.rel})));
+      for (const link of links) {
+        const url = new URL(link.href);
+        assert.equal(url.origin,'https://wa.me');
+        assert.equal(url.pathname,'/918982659046');
+        assert.ok(url.searchParams.get('text'));
+        assert.equal(link.target,'_blank');
+        assert.ok(link.rel.includes('noopener'));
+      }
       return await page.locator('.ps-bot').last().innerText();
     };
     const reset = () => page.locator('#ps-reset').click();
@@ -43,6 +53,16 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     assert.equal(wa.hostname,'wa.me'); assert.equal(wa.pathname,'/918982659046');
     assert.ok(wa.searchParams.get('text').includes('Quantity: 10'));
     assert.ok(wa.searchParams.get('text').includes('Navratri'));
+    await reset(); await ask('10 Bhaktamar Stotra');
+    const bhaktamarLink = await page.locator('.ps-inline-link').last().getAttribute('href');
+    let prefill = new URL(bhaktamarLink).searchParams.get('text');
+    assert.ok(prefill.includes('Product: Bhaktamar Stotra') && prefill.includes('Quantity: 10'));
+    assert.equal(await page.locator('#ps-quick a').getAttribute('href'), bhaktamarLink, 'Order suggestion goes directly to the same WhatsApp enquiry');
+    await ask('Sundarkand');
+    assert.equal(await page.locator('.ps-inline-link').first().getAttribute('href'), bhaktamarLink, 'Older response keeps its own product and quantity');
+    await ask('delivery');
+    prefill = new URL(await page.locator('#ps-whatsapp').getAttribute('href')).searchParams.get('text');
+    assert.ok(prefill.includes('Product: Sundarkand Pandulipi') && prefill.includes('Enquiry: delivery'));
     await reset(); await ask('25 copies');
     assert.ok((await ask('Bhaktamar Stotra')).includes('25 × ₹179 = ₹4,475'), 'Quantity-first follow-up');
     await reset(); await ask('Gift suggestions');
