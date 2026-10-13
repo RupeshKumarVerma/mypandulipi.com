@@ -23,7 +23,7 @@
     ganesh: ['ganesh', 'ganesha', 'ganpati', 'गणेश', 'गणपति'], surya: ['surya', 'सूर्य'],
     aarti: ['aarti', 'arti', 'aarati', 'आरती'], bhaktamar: ['bhaktamar', 'bhaktambar', 'bhaktambhar', 'भक्तामर', 'भक्ताम्बर']
   };
-  const state = { products: [], tiers: {}, offer: null, loaded: false, loading: null, selected: null, quantity: null, awaiting: null, purpose: '', lastQuestion: '', hindi: false, busy: false };
+  const state = { products: [], tiers: {}, offer: null, festive: [], loaded: false, loading: null, selected: null, quantity: null, awaiting: null, purpose: '', lastQuestion: '', hindi: false, busy: false };
   const say = (en, hi) => state.hindi && hi ? hi : en;
   const wa = message => 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
   function enquiry() {
@@ -32,11 +32,18 @@
     if (state.quantity) message += '\nQuantity: ' + state.quantity;
     if (state.purpose) message += '\nPurpose: ' + state.purpose;
     if (state.lastQuestion) message += '\nEnquiry: ' + state.lastQuestion;
-    if (state.selected && state.offer && state.selected.family === 'durga' && state.quantity === state.offer.quantity) message += '\nPlease check the ' + state.offer.coupon + ' combo offer.';
+    const festive = state.selected && festiveFor(state.selected);
+    const navratri = state.selected && state.offer && state.selected.family === 'durga' && state.quantity === state.offer.quantity;
+    if (navratri) {
+      message += '\nNavratri combo: ' + money(state.offer.price) + ' for ' + state.offer.quantity + ' Durga Chalisa Pandulipis. Coupon: ' + state.offer.coupon + '.';
+    } else if (festive) {
+      message += '\nFestive offer: ' + money(festive.price) + ' per piece; minimum order ' + festive.min + ' pieces.';
+      if (state.quantity >= festive.min) message += '\nFestive product subtotal: ' + money(state.quantity * festive.price);
+    }
     return message + '\nPlease confirm availability, final pricing and delivery charges.';
   }
   const css = document.createElement('link');
-  css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=3'); document.head.append(css);
+  css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=4'); document.head.append(css);
   const root = document.createElement('div'); root.id = 'pandulipi-sakhi-root';
   root.innerHTML = `
     <button id="ps-launch" type="button" aria-expanded="false" aria-controls="ps-panel" aria-label="Open Pandulipi Sakhi shopping assistant">
@@ -79,7 +86,7 @@
       b.addEventListener('click', () => send(item)); $('ps-quick').append(b);
     });
   }
-  function homeChips() { chips(state.hindi ? ['उत्पाद देखें', 'उपहार सुझाव', 'थोक ऑर्डर', 'डिलीवरी'] : ['Browse products', 'Gift suggestions', 'Bulk order', 'Delivery']); }
+  function homeChips() { chips(state.hindi ? ['त्योहारी ऑफर', 'उत्पाद देखें', 'उपहार सुझाव', 'डिलीवरी'] : ['Festive offers', 'Browse products', 'Gift suggestions', 'Delivery']); }
   function greeting() {
     add(say('राधे राधे! 🙏 I’m Sakhi, your MyPandulipi shopping companion.\n\nTell me the granth you’re looking for. I can help with prices, gifting and quantities.', 'राधे राधे! 🙏 मैं पांडुलिपि सखी हूँ।\n\nआप कौन-सा ग्रंथ खोज रहे हैं? मैं कीमत, उपहार और ऑर्डर की मात्रा चुनने में मदद कर सकती हूँ।'));
     homeChips(); scroll();
@@ -111,6 +118,34 @@
     });
     return result;
   }
+  function parseFestive(doc) {
+    const min = amount(doc.querySelector('#festive-offer .festive-min'));
+    if (!Number.isInteger(min) || min < 1) return [];
+    return [...doc.querySelectorAll('#festive-offer .festive-rate')].map(row => ({
+      festive: true, id: row.dataset.festiveId, products: (row.dataset.products || '').split(' ').filter(Boolean),
+      name: text(row.querySelector('.festive-product')), description: text(row.querySelector('th small')),
+      price: amount(row.querySelector('.festive-price')), regular: amount(row.querySelector('.festive-regular')), min
+    })).filter(p => p.id && p.name && p.price > 0 && p.regular >= p.price);
+  }
+  function festiveFor(p) { return p.festive ? p : state.festive.find(f => f.products.includes(p.priceKey)); }
+  function festiveMatches(q) {
+    const matched = matchProducts(q);
+    const mini = state.festive.find(p => p.id === 'mini');
+    let ids = [];
+    if (has(q, ['mini', 'मिनी', 'bajrang baan', 'bajrang ban', 'बजरंग बाण', 'बजरंग बान'])) ids = matched.some(p => !mini || !mini.products.includes(p.priceKey)) ? [] : ['mini'];
+    else if (has(q, ['sanskaran', 'sanskran', 'संस्करण', 'संस्कारन'])) ids = matched.some(p => p.family !== 'hanuman' || p.silver) ? [] : ['hanuman-sanskaran'];
+    else if (has(q, ['ramcharitmanas', 'shriramcharitmanas', 'ramcharit manas', 'रामचरितमानस'])) ids = ['ramcharitmanas'];
+    else if (has(q, aliases.sundarkand)) ids = has(q, ['regular', 'रेगुलर', 'सामान्य']) ? ['sundarkand-regular'] : has(q, ['premium', 'gift box', 'प्रीमियम']) ? ['sundarkand-premium'] : ['sundarkand-regular', 'sundarkand-premium'];
+    else if (has(q, aliases.aarti)) ids = has(q, ['large', 'big', 'premium', 'बड़ा', 'बड़ी', 'बड़ी', 'बड़े']) ? ['aarti-large'] : ['mini', 'aarti-large'];
+    else ids = matchProducts(q).map(p => festiveFor(p)).filter(Boolean).map(p => p.id);
+    if (!ids.length && has(q, ['chalisa', 'चालीसा']) && !has(q, ['silver', 'रजत'])) ids = ['mini'];
+    return state.festive.filter(p => ids.includes(p.id)).map(p => {
+      if (p.id !== 'mini') return p;
+      if (has(q, ['bajrang baan', 'bajrang ban', 'बजरंग बाण', 'बजरंग बान'])) return { ...p, name: 'Bajrang Baan — Mini', description: 'Mini size' };
+      const matches = matchProducts(q);
+      return matches.length === 1 && !matches[0].silver ? { ...p, name: matches[0].name + ' — Mini', description: 'Mini size', family: matches[0].family } : p;
+    });
+  }
   async function page(path) {
     const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 9000);
     try { const res = await fetch(site(path), { cache: 'no-cache', signal: controller.signal }); if (!res.ok) throw Error('Catalogue unavailable'); return new DOMParser().parseFromString(await res.text(), 'text/html'); }
@@ -124,7 +159,8 @@
       if (results[0].status === 'fulfilled') {
         const doc = results[0].value;
         state.products = parseProducts(doc);
-        const offer = doc.querySelector('#special-offer');
+        state.festive = parseFestive(doc);
+        const offer = doc.querySelector('#navratri-offer');
         if (offer) {
           const quantity = Number((text(offer.querySelector('.offer-pack')).match(/pack of (\d+)/i) || [])[1]);
           const price = amount(offer.querySelector('.offer-price'));
@@ -142,8 +178,8 @@
       const button = document.createElement('button'); button.type = 'button'; button.className = 'ps-product';
       if (p.image) { const img = document.createElement('img'); img.src = p.image; img.alt = ''; img.loading = 'lazy'; button.append(img); }
       const label = document.createElement('span'), title = document.createElement('strong'), price = document.createElement('small');
-      title.textContent = p.name; price.textContent = money(p.price) + say(' / piece', ' / प्रति पीस'); label.append(title, price); button.append(label);
-      button.addEventListener('click', () => send(p.name)); list.append(button);
+      title.textContent = p.name; price.textContent = money(p.price) + say(' / piece', ' / प्रति पीस') + (p.festive ? say(' · Min. ', ' · न्यूनतम ') + p.min : ''); label.append(title, price); button.append(label);
+      button.addEventListener('click', () => send((p.festive ? 'Festive offer: ' : '') + p.name)); list.append(button);
     });
     bubble.append(list);
   }
@@ -156,25 +192,33 @@
     const digits = norm(q);
     let match = digits.match(/(?:qty|quantity|pieces|copies|मात्रा)\s*[:=]?\s*(-?\d+(?:\.\d+)?)/i) || digits.match(/(-?\d+(?:\.\d+)?)\s*(?:pieces?|pcs?|copies|copy|books?|sets?|पीस|प्रतियां|प्रतियाँ|नग)/i);
     if (!match && /^-?\d+(?:\.\d+)?$/.test(digits)) match = [digits, digits];
-    if (!match && matchProducts(q).length && !has(q, ['under', 'budget', 'below', 'rupees', 'rs', '₹', 'बजट']) && !/[₹]/.test(q)) match = digits.match(/(?:^|\s)(-?\d+(?:\.\d+)?)\s+(?=[a-z\u0900-\u097f])/i);
+    if (!match && (matchProducts(q).length || festiveMatches(q).length) && !has(q, ['under', 'budget', 'below', 'rupees', 'rs', '₹', 'बजट']) && !/[₹]/.test(q)) match = digits.match(/(?:^|\s)(-?\d+(?:\.\d+)?)\s+(?=[a-z\u0900-\u097f])/i);
     if (!match && has(q, ['one copy', 'single piece', 'एक पीस', 'एक प्रति'])) return 1;
     return match ? Number(match[1]) : null;
   }
-  function unitPrice(p, count) { const tier = (state.tiers[p.priceKey] || []).find(t => count >= t.min && count <= t.max); return tier ? tier.price : p.price; }
+  function unitPrice(p, count) {
+    const tier = (state.tiers[p.priceKey] || []).find(t => count >= t.min && count <= t.max);
+    const regular = tier ? tier.price : p.price, festive = festiveFor(p);
+    return festive && count >= festive.min ? Math.min(regular, festive.price) : regular;
+  }
   function productReply(p, count = null, showTiers = false) {
+    if (p.festive) { festiveReply(p, count); return; }
     if (state.selected !== p && state.awaiting !== 'product') state.quantity = null;
     state.selected = p;
     if (count !== null) state.quantity = count;
     const qty = state.quantity;
     let reply = p.name + '\n' + say('Selling price: ', 'विक्रय मूल्य: ') + money(p.price) + say(' per piece', ' प्रति पीस');
     if (p.mrp) reply += '\nMRP: ' + money(p.mrp);
+    const festive = festiveFor(p);
+    if (festive) reply += '\n' + say('Festive offer', 'त्योहारी ऑफर') + (festive.id === 'mini' ? say(' (mini)', ' (मिनी)') : '') + ': ' + money(festive.price) + say(' per piece · Minimum order: ', ' प्रति पीस · न्यूनतम ऑर्डर: ') + festive.min + say(' pieces.', ' पीस।');
     if (!qty) reply += '\n\n' + (p.tags.length ? p.tags.join(' · ') : p.description);
     const tiers = state.tiers[p.priceKey] || [];
     if (qty) {
       const rate = unitPrice(p, qty);
       reply += '\n\n' + qty + ' × ' + money(rate) + ' = ' + money(qty * rate);
+      if (festive && qty >= festive.min && rate === festive.price) reply += '\n' + say('Festive rate applied.', 'त्योहारी दर लागू है।');
       reply += '\n' + say('Product subtotal; delivery, if applicable, is confirmed by our team.', 'यह उत्पाद का उप-योग है। डिलीवरी शुल्क, यदि लागू हो, टीम बताएगी।');
-      if (qty >= 10 && !tiers.length) reply += '\n' + say('Bulk rates could not be checked. This subtotal uses the listed single-piece price; please request a bulk quote.', 'थोक दर अभी जाँच नहीं सकी। यह एक पीस की दर से उप-योग है; थोक कोटेशन के लिए टीम से पूछें।');
+      if (qty >= 10 && !tiers.length && !(festive && qty >= festive.min)) reply += '\n' + say('Bulk rates could not be checked. This subtotal uses the listed single-piece price; please request a bulk quote.', 'थोक दर अभी जाँच नहीं सकी। यह एक पीस की दर से उप-योग है; थोक कोटेशन के लिए टीम से पूछें।');
       state.awaiting = null;
     } else {
       if (showTiers && tiers.length) reply += '\n\n' + say('Bulk pricing per piece:\n', 'थोक मूल्य प्रति पीस:\n') + tiers.map(t => t.label + ': ' + money(t.price)).join('\n');
@@ -187,7 +231,30 @@
     }
     const bubble = add(reply);
     bubble.append(whatsappLink(say('Enquire on WhatsApp ↗', 'WhatsApp पर पूछें ↗'), 'ps-inline-link'));
-    chips(qty ? [say('Order on WhatsApp', 'WhatsApp पर ऑर्डर'), say('Delivery', 'डिलीवरी'), say('Browse products', 'उत्पाद देखें')] : [say('1 copy', '1 पीस'), say('10 copies', '10 पीस'), say('Bulk pricing', 'थोक मूल्य')]);
+    chips(qty ? [say('Order on WhatsApp', 'WhatsApp पर ऑर्डर'), say('Delivery', 'डिलीवरी'), say('Browse products', 'उत्पाद देखें')] : [say('1 copy', '1 पीस'), say('5 copies', '5 पीस'), say('Festive offers', 'त्योहारी ऑफर')]);
+  }
+  function festiveReply(p, count = null) {
+    if (state.selected !== p && state.awaiting !== 'product') state.quantity = null;
+    state.selected = p;
+    if (count !== null) state.quantity = count;
+    const qty = state.quantity;
+    let reply = p.name + '\n' + (p.description ? p.description + '\n' : '') + say('Festive offer: ', 'त्योहारी ऑफर: ') + money(p.price) + say(' per piece', ' प्रति पीस') + '\n' + say('Regular: ', 'सामान्य दर: ') + money(p.regular) + ' · ' + say('Save ', 'बचत ') + money(p.regular - p.price) + '\n' + say('Minimum order: ', 'न्यूनतम ऑर्डर: ') + p.min + say(' pieces.', ' पीस।');
+    if (qty && qty >= p.min) {
+      reply += '\n\n' + qty + ' × ' + money(p.price) + ' = ' + money(qty * p.price) + '\n' + say('Product subtotal; delivery, if applicable, is confirmed on WhatsApp.', 'उत्पाद का उप-योग; डिलीवरी शुल्क, यदि लागू हो, WhatsApp पर पुष्टि होगी।');
+      state.awaiting = null;
+    } else {
+      if (qty) reply += '\n\n' + say('This quantity is below the festive minimum. This offer cannot be applied to ', 'यह मात्रा त्योहारी न्यूनतम से कम है। यह ऑफर लागू नहीं होगा: ') + qty + say(' pieces.', ' पीस।');
+      reply += '\n' + say('How many pieces would you like? For a mixed order or fewer pieces, our team can confirm your quote.', 'कितने पीस चाहिए? मिश्रित ऑर्डर या कम मात्रा के लिए टीम कीमत की पुष्टि करेगी।');
+      state.awaiting = 'quantity';
+    }
+    add(reply).append(whatsappLink(say('Enquire on WhatsApp ↗', 'WhatsApp पर पूछें ↗'), 'ps-inline-link'));
+    chips(qty >= p.min ? [say('Order on WhatsApp', 'WhatsApp पर ऑर्डर'), say('Delivery', 'डिलीवरी')] : [p.min + say(' copies', ' पीस'), say('Order on WhatsApp', 'WhatsApp पर ऑर्डर')]);
+  }
+  function festiveList(products = state.festive, count = null) {
+    state.selected = null; state.quantity = count; state.awaiting = 'product';
+    if (!products.length) { add(say('I don’t have a published festive rate for that edition. Please confirm it with our team on WhatsApp.', 'इस संस्करण की प्रकाशित त्योहारी दर उपलब्ध नहीं है। कृपया WhatsApp पर टीम से पुष्टि करें।')); return; }
+    productCards(products, say('Special festive offer rates per piece · Minimum order: ', 'विशेष त्योहारी दरें प्रति पीस · न्यूनतम ऑर्डर: ') + products[0].min + say(' pieces. Choose your edition; for mixed orders, our team will confirm the quote.', ' पीस। अपना संस्करण चुनें; मिश्रित ऑर्डर की कीमत टीम बताएगी।'));
+    chips([say('Navratri combo', 'नवरात्रि कॉम्बो'), say('Order on WhatsApp', 'WhatsApp पर ऑर्डर')]);
   }
   function offerReply() {
     if (!state.offer) { add(say('Our team can confirm current festive offers on WhatsApp. Which product are you interested in?', 'वर्तमान ऑफर की पुष्टि हमारी टीम WhatsApp पर करेगी। आप कौन-सा उत्पाद चाहते हैं?')); return; }
@@ -204,15 +271,25 @@
     if (/[\u0900-\u097f]/.test(raw)) state.hindi = true;
     if (has(q, ['english'])) { state.hindi = false; greeting(); return; }
     if (has(q, ['hindi', 'हिंदी', 'हिन्दी']) && !matches.length) { state.hindi = true; greeting(); return; }
-    if (has(q, ['sanskaran', 'संस्करण']) || (has(q, ['large', 'big', 'premium', 'बड़ा', 'बड़ी']) && matches.some(p => p.family === 'aarti'))) {
-      state.selected = null; state.quantity = null;
-      add(say('For the large / Sanskaran edition, please ask our team for the exact edition and current price. I will not use a smaller edition’s price for it.', 'बड़े / संस्करण वाले ग्रंथ की सही कीमत और उपलब्धता हमारी टीम बताएगी। उसकी जगह छोटे संस्करण की कीमत लागू नहीं होगी।')); homeChips(); return;
+    if (count !== null && (!Number.isInteger(count) || count < 1 || count > 10000)) { add(say('Please enter a whole-number quantity from 1 to 10,000. For a larger order, our team can help on WhatsApp.', 'कृपया 1 से 10,000 के बीच पूर्ण संख्या में मात्रा बताएँ। उससे बड़े ऑर्डर के लिए WhatsApp पर संपर्क करें।')); return; }
+    const festive = festiveMatches(q);
+    const festiveIntent = has(q, ['festive', 'festival offer', 'offer', 'offers', 'त्योहारी', 'ऑफर']);
+    const explicitEdition = has(q, ['mini', 'मिनी', 'sanskaran', 'sanskran', 'संस्करण', 'bajrang baan', 'bajrang ban', 'बजरंग बाण', 'बजरंग बान', 'ramcharitmanas', 'shriramcharitmanas', 'ramcharit manas', 'रामचरितमानस']) || has(q, ['large', 'big', 'premium', 'regular', 'बड़ा', 'बड़ी', 'बड़ी', 'प्रीमियम', 'रेगुलर']) && matches.some(p => ['aarti', 'sundarkand'].includes(p.family));
+    if (has(q, ['navratri', 'kanya', 'kanjak', 'नवरात्रि', 'कन्या', 'कंजक']) || !festiveIntent && has(q, ['coupon', 'combo', 'कूपन', 'कॉम्बो'])) { offerReply(); return; }
+    if (festiveIntent || explicitEdition) {
+      if (matches.length > 1) {
+        state.selected = null; state.quantity = null; state.awaiting = null;
+        productCards(matches, say('For a mixed order, our team will confirm the festive quote on WhatsApp. Select one product to check its individual rate.', 'मिश्रित ऑर्डर की त्योहारी कीमत टीम WhatsApp पर बताएगी। किसी एक उत्पाद की दर देखने के लिए उसे चुनें।'));
+        return;
+      }
+      if (festive.length === 1) festiveReply(festive[0], count);
+      else festiveList(festive.length ? festive : (matches.length || explicitEdition ? [] : state.festive), count);
+      return;
     }
     if (q === 'order' || q === 'buy' || (has(q, ['yes', 'yes please', 'हाँ', 'हां']) && state.selected) || has(q, ['whatsapp', 'contact', 'human', 'call', 'order now', 'place order', 'order on whatsapp', 'संपर्क', 'ऑर्डर करें', 'खरीदना']) && !matches.length) {
       add(say('Tap “Continue on WhatsApp” below. I’ve prepared your product and quantity in the enquiry. Our team will confirm your order at 8982659046. You can review the message before sending.', 'नीचे “WhatsApp पर आगे बढ़ें” दबाएँ। चुने हुए उत्पाद और मात्रा का संदेश तैयार है। हमारी टीम 8982659046 पर ऑर्डर की पुष्टि करेगी। भेजने से पहले आप संदेश देख सकते हैं।'));
       chips([say('Browse products', 'उत्पाद देखें'), say('Delivery', 'डिलीवरी')]); return;
     }
-    if (has(q, ['navratri', 'kanya', 'kanjak', 'coupon', 'combo', 'offer', 'offers', 'special offer', 'नवरात्रि', 'कन्या', 'कंजक', 'कूपन', 'कॉम्बो'])) { offerReply(); return; }
     if (matches.length === 1 && has(q, ['delivery', 'shipping', 'payment', 'packing', 'packaging', 'gift box'])) {
       if (state.selected !== matches[0]) state.quantity = null;
       state.selected = matches[0];
@@ -237,7 +314,6 @@
     if (has(q, ['packing', 'packaging', 'gift box', 'custom', 'personalise', 'personalize', 'logo', 'पैकिंग', 'बॉक्स', 'लोगो'])) {
       add(say('The listed prices include gift boxes. Sundarkand has a premium gift box and chandan-scented wooden cover. For bulk orders, you can ask about a printed personal note or card. Which product and quantity do you have in mind?', 'सूचीबद्ध कीमतों में गिफ्ट बॉक्स शामिल है। सुंदरकांड के साथ प्रीमियम बॉक्स और चंदन-सुगंधित लकड़ी का कवर है। थोक ऑर्डर में निजी संदेश / कार्ड के लिए टीम से पूछ सकते हैं। कौन-सा उत्पाद और कितनी मात्रा चाहिए?')); return;
     }
-    if (count !== null && (!Number.isInteger(count) || count < 1 || count > 10000)) { add(say('Please enter a whole-number quantity from 1 to 10,000. For a larger order, our team can help on WhatsApp.', 'कृपया 1 से 10,000 के बीच पूर्ण संख्या में मात्रा बताएँ। उससे बड़े ऑर्डर के लिए WhatsApp पर संपर्क करें।')); return; }
     if (matches.length > 1) { state.selected = null; state.quantity = null; productCards(matches, say('Here are the matching products. Choose one to see its prices and quantity options. For a mixed order, our team can prepare a combined quote.', 'ये उत्पाद मिले हैं। कीमत और मात्रा चुनने के लिए एक उत्पाद दबाएँ। मिश्रित ऑर्डर का कुल कोटेशन टीम बनाएगी।')); return; }
     if (matches.length === 1) { productReply(matches[0], count, has(q, ['bulk', 'wholesale', 'थोक'])); return; }
     if (count !== null) {
@@ -247,7 +323,7 @@
     }
     if (has(q, ['bulk', 'wholesale', 'quantity', 'थोक', 'ज्यादा'])) {
       if (state.selected) { state.quantity = null; productReply(state.selected, null, true); }
-      else { add(say('Bulk pricing starts at 10 copies for the regular collection. The seven wooden chalisas can be mixed to reach a bulk quantity. Which title and how many copies would you like?', 'सामान्य संग्रह में थोक मूल्य 10 प्रतियों से शुरू होता है। सात लकड़ी वाली चालीसाओं को मिलाकर थोक मात्रा बना सकते हैं। कौन-सा ग्रंथ और कितनी प्रतियाँ चाहिए?')); chips(['Hanuman Chalisa', 'Durga Chalisa', 'Sundarkand', 'Bhaktamar Stotra']); }
+      else { add(say('Special festive rates start at 5 pieces for the listed editions. Standard bulk tiers are also available from 10 copies. Which title and how many copies would you like? For mixed orders, our team can confirm the quote.', 'सूचीबद्ध संस्करणों पर विशेष त्योहारी दरें 5 पीस से शुरू हैं। सामान्य थोक दरें भी 10 प्रतियों से उपलब्ध हैं। कौन-सा ग्रंथ और कितनी प्रतियाँ चाहिए? मिश्रित ऑर्डर की कीमत टीम बताएगी।')); chips(['Festive offers', 'Hanuman Chalisa', 'Sundarkand', 'Bhaktamar Stotra']); }
       return;
     }
     if (has(q, ['gift', 'gifting', 'diwali', 'corporate', 'wedding', 'family', 'celebration', 'परिवार', 'समारोह', 'कॉर्पोरेट', 'उपहार', 'दिवाली', 'गिफ्ट', 'विवाह'])) {
