@@ -1,17 +1,47 @@
-# Pandulipi Sakhi integration (draft)
+# Pandulipi Sakhi
 
-This is a standalone chat widget, not yet connected to the live storefront. No production files have been changed.
+Pandulipi Sakhi is the storefront’s ivory-and-brown floating shopping guide. It is loaded on the home, bulk-orders, journal and Who We Are pages.
 
-## Install
-1. Place `pandulipi-sakhi.js` in the public/static directory served by the site.
-2. Before the script, expose current products as `window.PANDULIPI_CATALOG = [{name: 'Example', price: 149, offerPrice: 110, description: '...', url: '/products/example'}]`. These are examples, not authoritative prices.
-3. Load `<script src="/pandulipi-sakhi.js" defer></script>` in the website's layout.
-4. Optional: set `window.PANDULIPI_SAKHI_API='/api/sakhi/chat'` to a secure server-side AI endpoint returning JSON `{reply: '...'}`. Do not put AI API keys in client-side JavaScript.
-5. Test product matching, mobile responsiveness, Hindi/Hinglish questions, bulk inquiries, and WhatsApp link to 918982659046.
+## Behaviour
 
-## Current limitations
-- AI endpoint is **not** implemented. Without it, the widget uses deterministic basic responses, not generative AI.
-- Catalogue must be wired to the actual site data source. If absent, no prices are invented.
-- Widget has not been inserted into the site's page layout; this repo's application source was not discoverable through the connected API.
-- The current WhatsApp handover opens a new chat; it does not automatically send messages.
-- The AI endpoint must validate inputs and prices server-side, apply rate limits, and keep API credentials secret.
+- Opens only when the visitor chooses **Ask Sakhi**; supports keyboard close and mobile layouts.
+- Understands product names in English, Hindi and common Hinglish spellings.
+- Reads product names, images, MRP and selling prices from `index.html`, and quantity tiers from `bulk.html`. It fetches these pages on other storefront pages. No independent price list is hardcoded in the widget.
+- Reads the Durga combo’s quantity, total and coupon from the Special Offer section.
+- Supports quantity totals, budget suggestions, gifting follow-ups and catalogue-grounded FAQs.
+- Opens an editable WhatsApp enquiry to **+91 8982659046**, including the selected product, quantity and gifting purpose. It does not send the message or place the order automatically.
+- Does not store chats, collect payment data or send conversations to an AI provider.
+
+This version is an automated catalogue/FAQ guide, not a generative AI service. Unknown questions, edition-specific requests, mixed-order quotations and private order enquiries go to the team on WhatsApp. A future generative integration needs a secure server endpoint with server-side credentials and authoritative price validation; do not add an API key to these browser files.
+
+## Maintaining prices and catalogue
+
+Use the existing `tools/prices.py` workflow for the website’s prices. The assistant reads the resulting product cards and price table. Preserve these selectors if redesigning the catalogue:
+
+- Product cards: `#collection .feature` and `#collection .scard`
+- Titles: `h3` / `h4`; prices: `.price-now`, `.price-mrp`
+- Existing `<!-- PRICE:key -->` markers link each product to the correct bulk tier.
+- Bulk rows: `.prow`, `.pname b`, `.ptiers li span`, `.ptiers li b`
+- Special offer: `#special-offer`, `.offer-pack`, `.offer-price`, `.offer-regular`, `.offer-coupon strong`
+
+Update the FAQ wording in `pandulipi-sakhi.js` when shipping, packaging or ordering policies change. For a newly named granth, also extend its Hindi/Hinglish aliases. The assistant never promises stock, arrival dates, payment methods or unpublished edition prices.
+
+## Files and deployment
+
+- `pandulipi-sakhi.js`: conversation, catalogue parsing and WhatsApp enquiry
+- `pandulipi-sakhi.css`: scoped styles and floating-button spacing
+- `assets/fonts/sakhi-devanagari.woff2`: self-hosted Hindi glyphs; SIL Open Font License included alongside it
+- Script inclusion on `index.html`, `bulk.html`, `blog.html`, `who-we-are.html`
+
+GitHub Pages deploys the `main` branch. Update the script and CSS query versions together when changing cached assets. To remove the assistant, remove the four script tags; the remaining site does not depend on it.
+
+## Verification
+
+Serve the repository locally and run the browser checks with Playwright installed:
+
+```sh
+python -m http.server 8765
+node tools/test-sakhi.cjs
+```
+
+The test accepts `SAKHI_BASE_URL`, `PLAYWRIGHT_MODULE` and `CHROMIUM_EXECUTABLE` environment variables. It exercises catalogue prices, tier boundaries, Hindi queries, conversational context, safe WhatsApp handover, mobile layout, keyboard close and unavailable-catalogue handling.

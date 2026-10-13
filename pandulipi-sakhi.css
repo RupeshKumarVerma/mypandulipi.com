@@ -1,0 +1,64 @@
+@font-face { font-family:'Sakhi Devanagari'; font-style:normal; font-weight:400; font-display:swap; src:url('assets/fonts/sakhi-devanagari.woff2') format('woff2'); }
+/* Scoped ivory-and-brown shopping companion. */
+#pandulipi-sakhi-root { --ps-brown:#352219; --ps-ivory:#fbf7ee; --ps-gold:#d6a650; color:#352219; font:14px/1.5 'DM Sans','Sakhi Devanagari',system-ui,sans-serif; }
+#pandulipi-sakhi-root *,#pandulipi-sakhi-root *::before,#pandulipi-sakhi-root *::after { box-sizing:border-box; }
+#pandulipi-sakhi-root button,#pandulipi-sakhi-root input { font:inherit; }
+#pandulipi-sakhi-root button { cursor:pointer; }
+#pandulipi-sakhi-root button:disabled { cursor:wait; opacity:.55; }
+#pandulipi-sakhi-root a:focus-visible,#pandulipi-sakhi-root button:focus-visible,#pandulipi-sakhi-root input:focus-visible { outline:3px solid #b77c26; outline-offset:3px; }
+#ps-launch { position:fixed; right:24px; bottom:max(22px,env(safe-area-inset-bottom)); z-index:140; display:flex; align-items:center; gap:10px; min-height:60px; border:1px solid #c7a471; border-radius:40px; padding:7px 16px 7px 8px; background:var(--ps-brown); color:#fbf7ee; box-shadow:0 8px 28px #24150d33; text-align:left; transition:transform .18s; }
+#ps-launch:hover { transform:translateY(-3px); }
+#ps-launch strong { display:block; font-size:15px; font-weight:600; line-height:1.35; }
+#ps-launch small { display:block; font-size:10px; letter-spacing:.025em; color:#e7cfaa; }
+#pandulipi-sakhi-root .ps-avatar { width:42px; height:42px; flex:none; border-radius:50%; background:#f6efdf; display:grid; place-items:center; overflow:hidden; border:1px solid #e8d3ad; }
+#pandulipi-sakhi-root .ps-avatar img { width:36px; height:36px; object-fit:contain; }
+#pandulipi-sakhi-root .ps-spark { font-size:18px; color:#f2d08a; }
+#ps-panel { position:fixed; right:24px; bottom:96px; z-index:141; width:min(390px,calc(100vw - 32px)); height:min(620px,calc(100vh - 120px)); height:min(620px,calc(100dvh - 120px)); display:flex; flex-direction:column; overflow:hidden; border:1px solid #d7bd96; border-radius:22px; background:var(--ps-ivory); box-shadow:0 18px 65px #24150d33; }
+#ps-panel[hidden] { display:none; }
+#ps-head { display:flex; align-items:center; gap:10px; padding:16px 12px 14px 16px; color:#fff7e8; background:linear-gradient(125deg,#4e3324,#281911); flex:none; }
+#ps-head > div { min-width:0; flex:1; }
+#ps-head h2 { font-family:var(--f-display,Georgia,serif); font-size:21px; line-height:1.25; font-weight:400; margin:0 0 4px; color:#fff7e8; letter-spacing:0; }
+#ps-head p { margin:0; font-size:10px; color:#ecd6b3; }
+#ps-close { border:0; background:transparent; color:#fff7e8; font-size:28px!important; width:44px; height:44px; flex:none; border-radius:50%; line-height:1; }
+#ps-close:hover { background:#ffffff12; }
+#pandulipi-sakhi-root .ps-toolbar { display:flex; align-items:center; gap:4px; padding:3px 10px 3px 16px; border-bottom:1px solid #e8decc; flex:none; }
+#pandulipi-sakhi-root .ps-toolbar > span { flex:1; color:#796552; font-size:10px; }
+#pandulipi-sakhi-root .ps-toolbar button { background:transparent; border:0; padding:7px; min-height:36px; color:#674630; font-size:12px; }
+#ps-messages { flex:1; min-height:80px; overflow-y:auto; overscroll-behavior:contain; padding:16px 14px; display:flex; flex-direction:column; gap:12px; scrollbar-width:thin; }
+#pandulipi-sakhi-root .ps-bubble { padding:12px 14px; border-radius:15px; max-width:94%; flex-shrink:0; overflow-wrap:anywhere; }
+#pandulipi-sakhi-root .ps-bubble p { margin:0; white-space:pre-wrap; line-height:1.55; font-size:13px; }
+#pandulipi-sakhi-root .ps-bot { align-self:flex-start; background:#f0e6d4; border-bottom-left-radius:4px; }
+#pandulipi-sakhi-root .ps-user { align-self:flex-end; background:#4c3325; color:#fff7e8; border-bottom-right-radius:4px; }
+#ps-quick { display:flex; flex-wrap:wrap; gap:6px; padding:7px 14px; flex:none; }
+#ps-quick button { padding:7px 11px; min-height:34px; font-size:11px; line-height:1.3; background:#fffdf7; border:1px solid #d9c49f; border-radius:20px; color:#563a28; }
+#ps-quick button:hover { background:#eee0c8; }
+#ps-whatsapp { display:flex; align-items:center; justify-content:center; gap:9px; margin:5px 14px 8px; padding:10px 12px; min-height:40px; color:#205a45; border:1px solid #afc4af; border-radius:10px; background:#eef4e9; font-size:12px; font-weight:600; flex:none; }
+#ps-whatsapp:hover { background:#e3eddc; }
+#ps-form { display:flex; gap:8px; padding:10px 14px 5px; margin:0; border-top:1px solid #e5d9c4; flex:none; }
+#ps-input { width:100%; min-width:0; flex:1; font-size:16px!important; padding:10px 12px; border:1px solid #dbcbae; border-radius:12px; background:#fffdfa; color:#352219; }
+#ps-input::placeholder { color:#8a7865; font-size:12px; }
+#ps-send { display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:12px; color:#fff7e8; background:#4c3325; flex:none; }
+#ps-send svg { width:21px; height:21px; }
+#pandulipi-sakhi-root .ps-disclaimer { flex:none; margin:0; padding:4px 10px 9px; text-align:center; font-size:9px; color:#83705b; }
+#pandulipi-sakhi-root .ps-products { display:flex; flex-direction:column; gap:7px; margin-top:10px; }
+#pandulipi-sakhi-root .ps-product { display:flex; width:100%; align-items:center; gap:10px; text-align:left; padding:8px; border:1px solid #dbcbae; background:#fffaf1; color:#352219; border-radius:10px; }
+#pandulipi-sakhi-root .ps-product:hover { border-color:#b78336; }
+#pandulipi-sakhi-root .ps-product img { width:54px; height:54px; object-fit:contain; border-radius:7px; background:#f7f0e1; flex:none; }
+#pandulipi-sakhi-root .ps-product strong { display:block; font-size:12px; font-weight:600; }
+#pandulipi-sakhi-root .ps-product small { display:block; font-size:11px; color:#7b512c; margin-top:3px; }
+#pandulipi-sakhi-root .ps-inline-link { display:block; margin-top:10px; text-decoration:underline; text-underline-offset:3px; color:#704b25; font-size:12px; }
+#pandulipi-sakhi-root .ps-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.sakhi-ready .fab { right:264px; }
+.sakhi-open .totop { visibility:hidden; }
+.menu-open #pandulipi-sakhi-root { display:none; }
+@media(max-width:600px) {
+ #ps-launch { right:16px; bottom:max(16px,env(safe-area-inset-bottom)); min-height:54px; padding:6px 12px 6px 7px; gap:8px; }
+ #ps-launch .ps-avatar { width:38px; height:38px; }
+ #ps-launch .ps-spark { display:none; }
+ #ps-launch small { font-size:9px; }
+ #ps-panel { right:12px; bottom:max(84px,calc(env(safe-area-inset-bottom) + 68px)); width:calc(100vw - 24px); height:min(600px,calc(100vh - 104px)); height:min(600px,calc(100dvh - 104px)); border-radius:18px; }
+ .sakhi-ready .fab { right:211px; }
+ #ps-head { padding-top:12px; padding-bottom:12px; }
+ #ps-head h2 { font-size:20px; }
+}
+@media(prefers-reduced-motion:reduce) { #ps-launch { transition:none; } }
