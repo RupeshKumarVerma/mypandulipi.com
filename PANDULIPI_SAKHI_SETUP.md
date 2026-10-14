@@ -1,10 +1,10 @@
-# Pandulipi Sakhi
+# Meera
 
-Pandulipi Sakhi is the storefront’s ivory-and-brown floating shopping guide. It is loaded on the home, bulk-orders, journal and Who We Are pages.
+Meera is the storefront’s ivory-and-brown floating shopping guide. It is loaded on the home, bulk-orders, journal and Who We Are pages.
 
 ## Behaviour
 
-- Opens only when the visitor chooses **Ask Sakhi**; supports keyboard close and mobile layouts.
+- Opens only when the visitor chooses **Ask Meera**; supports keyboard close and mobile layouts.
 - Understands product names in English, Hindi and common Hinglish spellings.
 - Reads product names, images, MRP and selling prices from `index.html`, and quantity tiers from the JSON data in `bulk.html`. It fetches these pages on other storefront pages. No independent price list is hardcoded in the widget.
 - Reads the Durga combo’s quantity, total and coupon from the Special Offer section.
@@ -18,7 +18,7 @@ This version is an automated catalogue/FAQ guide, not a generative AI service. U
 
 Use the existing `tools/prices.py` workflow for the website’s prices. The assistant reads the resulting product cards and price table. Preserve these selectors if redesigning the catalogue:
 
-`FESTIVE_PRICES` contains the active seasonal overrides, including silver editions. `PRODUCTS` retains standard catalogue prices, which remain visible alongside festive prices and MRP. The generator applies the lower of the current offer and existing bulk rate to each quantity tier, and marks active offers with `data-festive="true"`. Sakhi uses that marker for festive-price enquiries and reads `.price-regular` to quote the regular selling price. The product catalogue PDF section and its download links have been removed from the website.
+`FESTIVE_PRICES` contains the active seasonal overrides, including silver editions. `PRODUCTS` retains standard catalogue prices, which remain visible alongside festive prices and MRP. The generator applies the lower of the current offer and existing bulk rate to each quantity tier, and marks active offers with `data-festive="true"`. Meera uses that marker for festive-price enquiries and reads `.price-regular` to quote the regular selling price. The product catalogue PDF section and its download links have been removed from the website.
 
 - Product cards: `#collection .feature` and `#collection .scard`
 - Titles: `h3` / `h4`; prices: `.price-now`, `.price-mrp`

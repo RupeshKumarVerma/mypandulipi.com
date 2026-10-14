@@ -1,4 +1,4 @@
-/* Pandulipi Sakhi: catalogue-grounded storefront guide.
+/* Meera: catalogue-grounded storefront guide.
  * Prices are read from the published product cards and bulk table, not copied here.
  * No external AI service, API key, chat storage or automatic WhatsApp sending.
  */
@@ -27,7 +27,7 @@
   const say = (en, hi) => state.hindi && hi ? hi : en;
   const wa = message => 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
   function enquiry() {
-    let message = 'Radhe Radhe! I came through Pandulipi Sakhi on MyPandulipi.com.';
+    let message = 'Radhe Radhe! I came through Meera on MyPandulipi.com.';
     if (state.selected) message += '\nProduct: ' + state.selected.name;
     if (state.quantity) message += '\nQuantity: ' + state.quantity;
     if (state.purpose) message += '\nPurpose: ' + state.purpose;
@@ -39,14 +39,14 @@
   css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=3'); document.head.append(css);
   const root = document.createElement('div'); root.id = 'pandulipi-sakhi-root';
   root.innerHTML = `
-    <button id="ps-launch" type="button" aria-expanded="false" aria-controls="ps-panel" aria-label="Open Pandulipi Sakhi shopping assistant">
+    <button id="ps-launch" type="button" aria-expanded="false" aria-controls="ps-panel" aria-label="Open Meera shopping assistant">
       <span class="ps-avatar" aria-hidden="true"><img src="${site('assets/nav-logo12.png')}" alt=""></span>
-      <span><strong>Ask Sakhi</strong><small>Your gifting companion</small></span><span class="ps-spark" aria-hidden="true">✦</span>
+      <span><strong>Ask Meera</strong><small>Your gifting companion</small></span><span class="ps-spark" aria-hidden="true">✦</span>
     </button>
     <section id="ps-panel" role="dialog" aria-labelledby="ps-title" hidden>
-      <header id="ps-head"><span class="ps-avatar" aria-hidden="true"><img src="${site('assets/nav-logo12.png')}" alt=""></span><div><h2 id="ps-title">Pandulipi Sakhi</h2><p>पांडुलिपि सखी · Product & gifting guide</p></div><button id="ps-close" type="button" aria-label="Close Sakhi">×</button></header>
+      <header id="ps-head"><span class="ps-avatar" aria-hidden="true"><img src="${site('assets/nav-logo12.png')}" alt=""></span><div><h2 id="ps-title">Meera</h2><p>मीरा · Product & gifting guide</p></div><button id="ps-close" type="button" aria-label="Close Meera">×</button></header>
       <div class="ps-toolbar"><span>Rooted in devotion. Here to help.</span><button id="ps-language" type="button" aria-label="Switch to Hindi">हिन्दी</button><button id="ps-reset" type="button" aria-label="Start a new conversation">↺</button></div>
-      <div id="ps-messages" role="log" aria-label="Conversation with Sakhi" aria-live="polite" aria-relevant="additions"></div>
+      <div id="ps-messages" role="log" aria-label="Conversation with Meera" aria-live="polite" aria-relevant="additions"></div>
       <div id="ps-quick" aria-label="Suggested questions"></div>
       <a id="ps-whatsapp" target="_blank" rel="noopener noreferrer">Continue on WhatsApp <span aria-hidden="true">↗</span></a>
       <form id="ps-form"><label class="ps-sr" for="ps-input">Ask about a product, price or gift</label><input id="ps-input" type="text" placeholder="Ask about a product or price…" autocomplete="off" maxlength="500" required><button id="ps-send" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m4 4 17 8-17 8 3-8-3-8Z"/><path d="M7 12h14"/></svg></button></form>
@@ -81,7 +81,7 @@
   }
   function homeChips() { chips(state.hindi ? ['उत्पाद देखें', 'उपहार सुझाव', 'थोक ऑर्डर', 'डिलीवरी'] : ['Browse products', 'Gift suggestions', 'Bulk order', 'Delivery']); }
   function greeting() {
-    add(say('राधे राधे! 🙏 I’m Sakhi, your MyPandulipi shopping companion.\n\nTell me the granth you’re looking for. I can help with prices, gifting and quantities.', 'राधे राधे! 🙏 मैं पांडुलिपि सखी हूँ।\n\nआप कौन-सा ग्रंथ खोज रहे हैं? मैं कीमत, उपहार और ऑर्डर की मात्रा चुनने में मदद कर सकती हूँ।'));
+    add(say('राधे राधे! 🙏 I’m Meera, your MyPandulipi shopping companion.\n\nTell me the granth you’re looking for. I can help with prices, gifting and quantities.', 'राधे राधे! 🙏 मैं मीरा हूँ।\n\nआप कौन-सा ग्रंथ खोज रहे हैं? मैं कीमत, उपहार और ऑर्डर की मात्रा चुनने में मदद कर सकती हूँ।'));
     homeChips(); scroll();
   }
   function family(name) { const q = norm(name); return Object.keys(aliases).find(key => has(q, aliases[key])) || q; }
@@ -241,7 +241,7 @@
     if (has(q, ['return', 'refund', 'cancel', 'damaged', 'track', 'tracking', 'रिटर्न', 'रिफंड', 'खराब', 'ट्रैक', 'रद्द'])) {
       add(say('For an existing order, tracking, cancellation or a damaged item, please contact our team on WhatsApp with your order details. I don’t have access to private order records or a confirmed return policy.', 'पुराने ऑर्डर, ट्रैकिंग, रद्द करने या खराब वस्तु के लिए WhatsApp पर टीम को ऑर्डर की जानकारी दें। मेरे पास निजी ऑर्डर रिकॉर्ड या पक्की रिटर्न नीति की जानकारी नहीं है।')); return;
     }
-    if (has(q, ['who are you', 'are you ai', 'are you a bot', 'chatgpt', 'तुम कौन', 'आप कौन'])) { add(say('I’m Pandulipi Sakhi, MyPandulipi’s automated product and gifting guide. I use our published catalogue to help with prices and common shopping questions. Our team handles final orders on WhatsApp.', 'मैं पांडुलिपि सखी, MyPandulipi की स्वचालित उत्पाद और उपहार मार्गदर्शिका हूँ। प्रकाशित कैटलॉग से कीमत और सामान्य खरीदारी की जानकारी देती हूँ। टीम WhatsApp पर अंतिम ऑर्डर लेती है।')); return; }
+    if (has(q, ['who are you', 'are you ai', 'are you a bot', 'chatgpt', 'तुम कौन', 'आप कौन'])) { add(say('I’m Meera, MyPandulipi’s automated product and gifting guide. I use our published catalogue to help with prices and common shopping questions. Our team handles final orders on WhatsApp.', 'मैं मीरा, MyPandulipi की स्वचालित उत्पाद और उपहार मार्गदर्शिका हूँ। प्रकाशित कैटलॉग से कीमत और सामान्य खरीदारी की जानकारी देती हूँ। टीम WhatsApp पर अंतिम ऑर्डर लेती है।')); return; }
     if (has(q, ['founder', 'owner', 'who we are', 'about us', 'made in', 'location', 'address', 'rangwasa', 'कहाँ बन', 'निर्माण', 'मालिक', 'संस्थापक'])) {
       add(say('MyPandulipi is the venture of Chandni and Rupesh, based in Rangwasa, Indore. We make manuscript-style sacred granths with thoughtful gift packaging. Contact us on WhatsApp before arranging a visit.', 'MyPandulipi, चाँदनी और रुपेश की पहल है। रंगवासा, इंदौर में हम पांडुलिपि स्वरूप के पवित्र ग्रंथ और उपहार पैकिंग तैयार करते हैं। मिलने आने से पहले WhatsApp पर संपर्क करें।')); return;
     }

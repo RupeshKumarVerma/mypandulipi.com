@@ -161,7 +161,7 @@ def update_bulk():
     html = p.read_text()
     rows = "\n".join(row(k) for k in REGULAR)
     silver = "\n".join(row(k) for k in SILVER)
-    # Preserve existing quantity calculations for Sakhi without displaying a
+    # Preserve existing quantity calculations for Meera without displaying a
     # quantity-slab table on the storefront.
     bulk_data = json.dumps({k: [{"label": q, "price": v} for q, v in current_tiers(k)]
                             for k in REGULAR + SILVER}, ensure_ascii=False)

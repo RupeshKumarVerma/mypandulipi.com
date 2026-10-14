@@ -18,7 +18,7 @@ const money = n => '₹' + n.toLocaleString('en-IN');
       await page.locator('#ps-input').fill(message);
       await page.locator('#ps-input').press('Enter');
       await page.locator('#ps-send:not([disabled])').waitFor();
-      // Every navigational link inside Sakhi must go directly to WhatsApp.
+      // Every navigational link inside Meera must go directly to WhatsApp.
       const links = await page.locator('#pandulipi-sakhi-root a').evaluateAll(nodes => nodes.map(a => ({href:a.href,target:a.target,rel:a.rel})));
       for (const link of links) {
         const url = new URL(link.href);
@@ -89,7 +89,7 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     assert.ok((await ask('Delivery')).includes('free within Indore'));
     assert.ok((await ask('Cash on delivery')).includes('payment options'));
     assert.ok((await ask('return policy')).includes('confirmed return policy'));
-    assert.ok((await ask('हिंदी')).includes('पांडुलिपि सखी'));
+    assert.ok((await ask('हिंदी')).includes('मीरा'));
     assert.ok((await ask('१० हनुमान चालीसा')).includes('10 × ₹99 = ₹990'));
     await ask('English');
     assert.ok((await ask('the weather tomorrow')).includes('don’t have a confirmed answer'));
