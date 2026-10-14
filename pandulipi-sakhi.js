@@ -93,7 +93,7 @@
       const image = card.querySelector('img');
       const description = card.querySelector('.feature-copy > p:not(.feature-deva),.scard-body > p');
       const priceKey = (card.innerHTML.match(/<!--\s*PRICE:([\w-]+)/) || [])[1];
-      return { name, price, mrp: amount(card.querySelector('.price-mrp')), description: text(description), tags: [...card.querySelectorAll('.tag')].map(text), family: family(name), silver: /silver/i.test(name), priceKey, image: image ? site(image.getAttribute('src')) : null };
+      return { name, price, mrp: amount(card.querySelector('.price-mrp')), festive: !!card.querySelector('.price[data-festive="true"]'), description: text(description), tags: [...card.querySelectorAll('.tag')].map(text), family: family(name), silver: /silver/i.test(name), priceKey, image: image ? site(image.getAttribute('src')) : null };
     }).filter(p => p.name && Number.isFinite(p.price) && p.price > 0);
   }
   function parseBulk(doc) {
@@ -167,6 +167,7 @@
     if (count !== null) state.quantity = count;
     const qty = state.quantity;
     let reply = p.name + '\n' + say('Selling price: ', 'विक्रय मूल्य: ') + money(p.price) + say(' per piece', ' प्रति पीस');
+    if (p.festive) reply += '\n' + say('Festive season offer', 'त्योहारी सीज़न ऑफर');
     if (p.mrp) reply += '\nMRP: ' + money(p.mrp);
     if (!qty) reply += '\n\n' + (p.tags.length ? p.tags.join(' · ') : p.description);
     const tiers = state.tiers[p.priceKey] || [];
@@ -188,6 +189,14 @@
     const bubble = add(reply);
     bubble.append(whatsappLink(say('Enquire on WhatsApp ↗', 'WhatsApp पर पूछें ↗'), 'ps-inline-link'));
     chips(qty ? [say('Order on WhatsApp', 'WhatsApp पर ऑर्डर'), say('Delivery', 'डिलीवरी'), say('Browse products', 'उत्पाद देखें')] : [say('1 copy', '1 पीस'), say('10 copies', '10 पीस'), say('Bulk pricing', 'थोक मूल्य')]);
+  }
+  function festiveReply() {
+    const groups = [...new Map(state.products.filter(p => p.festive).map(p => [p.priceKey, p])).values()];
+    if (!groups.length) { add(say('Our team can confirm current festive prices on WhatsApp.', 'वर्तमान त्योहारी कीमतों की पुष्टि हमारी टीम WhatsApp पर करेगी।')); return; }
+    state.selected = null; state.quantity = null; state.awaiting = 'product';
+    const lines = groups.map(p => (p.priceKey === 'chalisa' ? say('All 7 mini Chalisas', 'सभी 7 मिनी चालीसा') : p.name) + ': ' + money(p.price) + say(' per piece', ' प्रति पीस'));
+    add(say('Festive season prices\n', 'त्योहारी सीज़न की कीमतें\n') + lines.join('\n') + '\n\n' + say('Which granth would you like?', 'आप कौन-सा ग्रंथ चाहेंगे?'));
+    homeChips();
   }
   function offerReply() {
     if (!state.offer) { add(say('Our team can confirm current festive offers on WhatsApp. Which product are you interested in?', 'वर्तमान ऑफर की पुष्टि हमारी टीम WhatsApp पर करेगी। आप कौन-सा उत्पाद चाहते हैं?')); return; }
@@ -212,7 +221,8 @@
       add(say('Tap “Continue on WhatsApp” below. I’ve prepared your product and quantity in the enquiry. Our team will confirm your order at 8982659046. You can review the message before sending.', 'नीचे “WhatsApp पर आगे बढ़ें” दबाएँ। चुने हुए उत्पाद और मात्रा का संदेश तैयार है। हमारी टीम 8982659046 पर ऑर्डर की पुष्टि करेगी। भेजने से पहले आप संदेश देख सकते हैं।'));
       chips([say('Browse products', 'उत्पाद देखें'), say('Delivery', 'डिलीवरी')]); return;
     }
-    if (has(q, ['navratri', 'kanya', 'kanjak', 'coupon', 'combo', 'offer', 'offers', 'special offer', 'नवरात्रि', 'कन्या', 'कंजक', 'कूपन', 'कॉम्बो'])) { offerReply(); return; }
+    if (has(q, ['navratri', 'kanya', 'kanjak', 'coupon', 'combo', 'नवरात्रि', 'कन्या', 'कंजक', 'कूपन', 'कॉम्बो'])) { offerReply(); return; }
+    if (!matches.length && has(q, ['festive', 'offer', 'offers', 'special offer', 'त्योहारी', 'ऑफर'])) { festiveReply(); return; }
     if (matches.length === 1 && has(q, ['delivery', 'shipping', 'payment', 'packing', 'packaging', 'gift box'])) {
       if (state.selected !== matches[0]) state.quantity = null;
       state.selected = matches[0];

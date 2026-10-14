@@ -33,20 +33,28 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     const reset = () => page.locator('#ps-reset').click();
     await ask('Browse products');
     assert.equal(await page.locator('.ps-bot').last().locator('.ps-product').count(), 13);
-    const singles = [['Hanuman Chalisa',149,249],['BhagwatGeeta',999,1999],['Sundarkand',1099,1999],['Aarti Sangrah',149,299],['Bhaktamar Stotra',199,299],['Silver Hanuman Chalisa',1100,2500],['Silver Bhaktamar',1499,3000]];
+    const singles = [['Hanuman Chalisa',99,249],['Durga Chalisa',99,249],['Shiv Chalisa',99,249],['Lakshmi Chalisa',99,249],['Surya Chalisa',99,249],['Krishna Chalisa',99,249],['Ganesh Chalisa',99,249],['BhagwatGeeta',649,1999],['Sundarkand',799,1999],['Aarti Sangrah',99,299],['Bhaktamar Stotra',99,299],['Silver Hanuman Chalisa',1100,2500],['Silver Bhaktamar',1499,3000]];
     for (const [name, price, mrp] of singles) {
       const answer = await ask(name);
       assert.ok(answer.includes('Selling price: '+money(price)+' per piece'), name+' selling price');
       assert.ok(answer.includes('MRP: '+money(mrp)), name+' MRP');
     }
-    const boundaryRates = [[1,149],[9,149],[10,140],[25,140],[26,130],[50,130],[51,120],[100,120],[101,110]];
+    const boundaryRates = [[1,99],[9,99],[10,99],[25,99],[26,99],[50,99],[51,99],[100,99],[101,99]];
     for (const [qty, rate] of boundaryRates) {
       const answer = await ask(qty+' Hanuman Chalisa');
       assert.ok(answer.includes(qty+' × '+money(rate)+' = '+money(qty*rate)), answer);
     }
     assert.ok((await ask('10 Silver Hanuman Chalisa')).includes('10 × ₹1,100 = ₹11,000'));
     assert.ok((await ask('11 Silver Hanuman Chalisa')).includes('11 × ₹999 = ₹10,989'));
-    assert.ok((await ask('26 Geeta')).includes('26 × ₹900 = ₹23,400'));
+    assert.ok((await ask('10 Silver Bhaktamar')).includes('10 × ₹1,499 = ₹14,990'));
+    assert.ok((await ask('11 Silver Bhaktamar')).includes('11 × ₹1,199 = ₹13,189'));
+    assert.ok((await ask('26 Geeta')).includes('26 × ₹649 = ₹16,874'));
+    for (const query of ['festive offer', 'offers', 'त्योहारी ऑफर']) {
+      const festive = await ask(query);
+      assert.ok(festive.includes('₹99') && festive.includes('₹799') && festive.includes('₹649'), query);
+      assert.ok(!festive.includes('₹899'), 'Generic festive enquiry must not be limited to the Navratri combo');
+    }
+    await ask('English');
     assert.ok((await ask('10 Durga Chalisa')).includes('combo product total is ₹899'));
     assert.ok((await ask('Navratri offer')).includes('Save ₹591'));
     let wa = new URL(await page.locator('#ps-whatsapp').getAttribute('href'));
@@ -64,7 +72,7 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     prefill = new URL(await page.locator('#ps-whatsapp').getAttribute('href')).searchParams.get('text');
     assert.ok(prefill.includes('Product: Sundarkand Pandulipi') && prefill.includes('Enquiry: delivery'));
     await reset(); await ask('25 copies');
-    assert.ok((await ask('Bhaktamar Stotra')).includes('25 × ₹179 = ₹4,475'), 'Quantity-first follow-up');
+    assert.ok((await ask('Bhaktamar Stotra')).includes('25 × ₹99 = ₹2,475'), 'Quantity-first follow-up');
     await reset(); await ask('Gift suggestions');
     assert.ok((await ask('Corporate gifting')).includes('budget per gift'));
     await ask('200');
@@ -76,12 +84,12 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     assert.ok((await ask('0 pieces')).includes('whole-number'));
     assert.ok((await ask('1.5 copies')).includes('whole-number'));
     assert.ok((await ask('Large Aarti Sangrah')).includes('exact edition'));
-    assert.ok(!(await page.locator('.ps-bot').last().innerText()).includes('₹149'));
+    assert.ok(!(await page.locator('.ps-bot').last().innerText()).includes('₹99'));
     assert.ok((await ask('Delivery')).includes('free within Indore'));
     assert.ok((await ask('Cash on delivery')).includes('payment options'));
     assert.ok((await ask('return policy')).includes('confirmed return policy'));
     assert.ok((await ask('हिंदी')).includes('पांडुलिपि सखी'));
-    assert.ok((await ask('१० हनुमान चालीसा')).includes('10 × ₹140 = ₹1,400'));
+    assert.ok((await ask('१० हनुमान चालीसा')).includes('10 × ₹99 = ₹990'));
     await ask('English');
     assert.ok((await ask('the weather tomorrow')).includes('don’t have a confirmed answer'));
     await ask('<img src=x onerror="window.sakhiXss=1">');
@@ -108,7 +116,7 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     for (const path of ['bulk.html','blog.html','who-we-are.html']) {
       await page.goto(new URL(path,base).href,{waitUntil:'domcontentloaded'});
       await page.locator('#ps-launch').click();
-      assert.ok((await ask('Sundarkand')).includes('Selling price: ₹1,099 per piece'), path);
+      assert.ok((await ask('Sundarkand')).includes('Selling price: ₹799 per piece'), path);
     }
     // An unavailable catalogue must never produce an invented price.
     await page.route('**/index.html',route=>route.abort());

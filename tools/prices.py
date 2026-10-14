@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Single source of truth for mypandulipi prices (matches the Product Catalogue).
+"""Single source of truth for MyPandulipi website prices.
 
 Run `python3 tools/prices.py` after changing any price below. It rewrites the
 price blocks on index.html and the price list on bulk.html (between the
@@ -8,6 +8,13 @@ PRICES:... markers) and the Product offers in the homepage structured data.
 import json, math, re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+# Keep catalogue rates separate so a seasonal offer can be ended without losing
+# the normal retail or bulk prices. Silver editions have no festive override.
+FESTIVE_PRICES = {
+    "chalisa": 99, "aarti": 99, "bhaktamar": 99,
+    "sundarkand": 799, "gita": 649,
+}
 
 # key: (name, devanagari, mrp, price, [(qty label, per-piece price), ...])
 PRODUCTS = {
@@ -52,15 +59,28 @@ def off(mrp, price):  # rounded down, same as the catalogue
     return math.floor((mrp - price) * 100 / mrp)
 
 
+def current_price(key):
+    return FESTIVE_PRICES.get(key, PRODUCTS[key][3])
+
+
+def current_tiers(key):
+    # Quantity orders must never cost more per piece than the live offer.
+    return [(qty, min(price, current_price(key))) for qty, price in PRODUCTS[key][4]]
+
+
 def price_block(key):
-    name, deva, mrp, price, tiers = PRODUCTS[key]
+    name, deva, mrp, _, _ = PRODUCTS[key]
+    price, tiers = current_price(key), current_tiers(key)
     best = tiers[-1]
     each = " each" if key == "chalisa" else ""
+    festive = ' data-festive="true"' if key in FESTIVE_PRICES else ''
+    badge = 'Festive offer' if key in FESTIVE_PRICES else f'{off(mrp, price)}% off'
+    bulk_label = 'See festive &amp; bulk rates' if key in FESTIVE_PRICES else f'Bulk from {inr(best[1])} per piece'
     return (
         f'<!-- PRICE:{key} -->'
-        f'<div class="price"><span class="price-now">{inr(price)}{each}</span>'
-        f'<s class="price-mrp">MRP {inr(mrp)}</s><span class="price-off">{off(mrp, price)}% off</span></div>'
-        f'<a class="price-bulk" href="bulk.html#price-list">Bulk from {inr(best[1])} per piece <span aria-hidden="true">→</span></a>'
+        f'<div class="price"{festive}><span class="price-now">{inr(price)}{each}</span>'
+        f'<s class="price-mrp">MRP {inr(mrp)}</s><span class="price-off">{badge}</span></div>'
+        f'<a class="price-bulk" href="bulk.html#price-list">{bulk_label} <span aria-hidden="true">→</span></a>'
         f'<!-- /PRICE -->'
     )
 
@@ -115,7 +135,7 @@ def update_index():
     for g in graph:
         key = ld_map.get(g.get("name"))
         if g.get("@type") == "Product" and key:
-            g["offers"] = {"@type": "Offer", "price": str(PRODUCTS[key][3]), "priceCurrency": "INR",
+            g["offers"] = {"@type": "Offer", "price": str(current_price(key)), "priceCurrency": "INR",
                            "availability": "https://schema.org/InStock",
                            "url": "https://mypandulipi.com/#collection"}
     html = html[:m.start(2)] + "\n" + json.dumps(data, ensure_ascii=False, indent=2) + "\n" + html[m.end(2):]
@@ -123,11 +143,13 @@ def update_index():
 
 
 def row(key):
-    name, deva, mrp, price, tiers = PRODUCTS[key]
+    name, deva, mrp, _, _ = PRODUCTS[key]
+    price, tiers = current_price(key), current_tiers(key)
+    label = 'Festive price' if key in FESTIVE_PRICES else 'Our price'
     t = "".join(f'<li><span>{q}</span><b>{inr(v)}</b></li>' for q, v in tiers)
     return (f'<div class="prow"><div class="pname"><b>{name}</b><span class="deva" lang="hi">{deva}</span></div>'
             f'<div class="pmrp"><span class="plabel">MRP</span><s>{inr(mrp)}</s></div>'
-            f'<div class="pours"><span class="plabel">Our price</span><b>{inr(price)}</b><small>{off(mrp, price)}% off</small></div>'
+            f'<div class="pours"><span class="plabel">{label}</span><b>{inr(price)}</b><small>{off(mrp, price)}% off</small></div>'
             f'<ul class="ptiers" aria-label="Bulk price per piece">{t}</ul></div>')
 
 
