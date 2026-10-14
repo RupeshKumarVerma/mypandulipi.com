@@ -6,7 +6,7 @@ Pandulipi Sakhi is the storefront’s ivory-and-brown floating shopping guide. I
 
 - Opens only when the visitor chooses **Ask Sakhi**; supports keyboard close and mobile layouts.
 - Understands product names in English, Hindi and common Hinglish spellings.
-- Reads product names, images, MRP and selling prices from `index.html`, and quantity tiers from `bulk.html`. It fetches these pages on other storefront pages. No independent price list is hardcoded in the widget.
+- Reads product names, images, MRP and selling prices from `index.html`, and quantity tiers from the JSON data in `bulk.html`. It fetches these pages on other storefront pages. No independent price list is hardcoded in the widget.
 - Reads the Durga combo’s quantity, total and coupon from the Special Offer section.
 - Supports quantity totals, budget suggestions, gifting follow-ups and catalogue-grounded FAQs.
 - Opens an editable WhatsApp enquiry to **+91 8982659046**, including the selected product, quantity, gifting purpose and latest enquiry. All response links and WhatsApp suggestion buttons open WhatsApp directly. Links within older responses keep the product and quantity shown in that response. It does not send the message or place the order automatically.
@@ -23,7 +23,7 @@ Use the existing `tools/prices.py` workflow for the website’s prices. The assi
 - Product cards: `#collection .feature` and `#collection .scard`
 - Titles: `h3` / `h4`; prices: `.price-now`, `.price-mrp`
 - Existing `<!-- PRICE:key -->` markers link each product to the correct bulk tier.
-- Bulk rows: `.prow`, `.pname b`, `.ptiers li span`, `.ptiers li b`
+- Quantity calculations: `#bulk-pricing-data` JSON generated from the same pricing source. The visible quantity-slab column has been removed; the storefront shows MRP, regular and festive selling prices only.
 - Special offer: `#special-offer`, `.offer-pack`, `.offer-price`, `.offer-regular`, `.offer-coupon strong`
 
 Update the FAQ wording in `pandulipi-sakhi.js` when shipping, packaging or ordering policies change. For a newly named granth, also extend its Hindi/Hinglish aliases. The assistant never promises stock, arrival dates, payment methods or unpublished edition prices.

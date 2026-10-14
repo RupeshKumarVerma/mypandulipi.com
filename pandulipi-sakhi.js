@@ -98,15 +98,18 @@
   }
   function parseBulk(doc) {
     const result = {};
-    doc.querySelectorAll('.prow:not(.prow--head)').forEach(row => {
-      const name = text(row.querySelector('.pname b'));
-      if (!name) return;
-      const key = /silver.*hanuman/i.test(name) ? 'silver-hanuman' : /silver.*bhaktamar/i.test(name) ? 'silver-bhaktamar' : /chalisa/i.test(name) ? 'chalisa' : family(name);
-      result[key] = [...row.querySelectorAll('.ptiers li')].map(li => {
-        const label = text(li.querySelector('span')), numbers = label.match(/\d+/g) || [];
+    const source = doc.querySelector('#bulk-pricing-data');
+    if (!source) return result;
+    let data;
+    try { data = JSON.parse(source.textContent); } catch { return result; }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return result;
+    Object.entries(data).forEach(([key, tiers]) => {
+      if (!Array.isArray(tiers)) return;
+      result[key] = tiers.filter(t => t && typeof t.label === 'string' && Number.isFinite(t.price)).map(t => {
+        const label = t.label, numbers = label.match(/\d+/g) || [];
         const min = /^above/i.test(label) ? Number(numbers[0]) + 1 : Number(numbers[0]);
         const max = /^above/i.test(label) ? Infinity : Number(numbers[1] || numbers[0]);
-        return { min, max, label, price: amount(li.querySelector('b')) };
+        return { min, max, label, price: t.price };
       }).filter(t => t.min > 0 && t.price > 0);
     });
     return result;

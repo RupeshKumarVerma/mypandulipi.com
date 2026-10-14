@@ -71,12 +71,11 @@ def current_tiers(key):
 
 def price_block(key):
     name, deva, mrp, regular, _ = PRODUCTS[key]
-    price, tiers = current_price(key), current_tiers(key)
-    best = tiers[-1]
+    price = current_price(key)
     each = " each" if key == "chalisa" else ""
     festive = ' data-festive="true"' if key in FESTIVE_PRICES else ''
     badge = 'Festive offer' if key in FESTIVE_PRICES else f'{off(mrp, price)}% off'
-    bulk_label = 'See festive &amp; bulk rates' if key in FESTIVE_PRICES else f'Bulk from {inr(best[1])} per piece'
+    bulk_label = 'See all product prices'
     regular_amount = f'<s class="price-regular">{inr(regular)}</s>' if price < regular else f'<span class="price-regular">{inr(regular)}</span>'
     return (
         f'<!-- PRICE:{key} -->'
@@ -148,15 +147,13 @@ def update_index():
 
 def row(key):
     name, deva, mrp, regular, _ = PRODUCTS[key]
-    price, tiers = current_price(key), current_tiers(key)
+    price = current_price(key)
     label = 'Festive price' if key in FESTIVE_PRICES else 'Our price'
     regular_amount = f'<s>{inr(regular)}</s>' if price < regular else inr(regular)
-    t = "".join(f'<li><span>{q}</span><b>{inr(v)}</b></li>' for q, v in tiers)
     return (f'<div class="prow"><div class="pname"><b>{name}</b><span class="deva" lang="hi">{deva}</span></div>'
             f'<div class="pmrp"><span class="plabel">MRP</span><s>{inr(mrp)}</s></div>'
             f'<div class="pours"><span class="plabel">{label}</span><b>{inr(price)}</b>'
-            f'<span class="pregular">Regular {regular_amount}</span><small>{off(mrp, price)}% off MRP</small></div>'
-            f'<ul class="ptiers" aria-label="Bulk price per piece">{t}</ul></div>')
+            f'<span class="pregular">Regular {regular_amount}</span><small>{off(mrp, price)}% off MRP</small></div></div>')
 
 
 def update_bulk():
@@ -164,13 +161,18 @@ def update_bulk():
     html = p.read_text()
     rows = "\n".join(row(k) for k in REGULAR)
     silver = "\n".join(row(k) for k in SILVER)
+    # Preserve existing quantity calculations for Sakhi without displaying a
+    # quantity-slab table on the storefront.
+    bulk_data = json.dumps({k: [{"label": q, "price": v} for q, v in current_tiers(k)]
+                            for k in REGULAR + SILVER}, ensure_ascii=False)
     table = f'''<!-- PRICES -->
     <div class="plist rv">
-      <div class="prow prow--head" aria-hidden="true"><span>Granth</span><span>MRP</span><span>Selling price</span><span>Bulk price per piece</span></div>
+      <div class="prow prow--head" aria-hidden="true"><span>Granth</span><span>MRP</span><span>Selling price</span></div>
 {rows}
       <div class="pgroup"><span>Special premium collection</span><span class="deva" lang="hi">रजत संग्रह</span></div>
 {silver}
     </div>
+    <script type="application/json" id="bulk-pricing-data">{bulk_data}</script>
     <!-- /PRICES -->'''
     html = re.sub(r"<!-- PRICES -->.*?<!-- /PRICES -->", lambda _: table, html, flags=re.S)
     p.write_text(html)
