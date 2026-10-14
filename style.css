@@ -1019,6 +1019,8 @@ body{ font-size:15.5px; line-height:1.68; }
 .price{ display:flex; align-items:baseline; gap:10px 12px; flex-wrap:wrap; margin:18px 0 6px; }
 .price-now{ font-family:var(--f-display); font-size:1.7rem; line-height:1; color:var(--ink); }
 .price-mrp{ font-size:.9rem; color:var(--ink-2); }
+.price-reference{ display:flex; flex-basis:100%; flex-wrap:wrap; gap:4px 16px; color:var(--ink-2); font-size:.9rem; }
+.price-reference > span{ white-space:nowrap; }
 .price-off{ font-size:.7rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--sindoor); background:rgba(201,70,42,.09); padding:4px 10px; border-radius:999px; }
 .price-bulk{ align-self:flex-start; display:inline-flex; gap:6px; font-size:.86rem; color:var(--ink-2); margin:0 0 18px; border-bottom:1px dashed rgba(35,23,16,.3); transition:color .25s, border-color .25s; }
 .price-bulk:hover{ color:var(--sindoor); border-color:var(--sindoor); }
@@ -1033,6 +1035,8 @@ body{ font-size:15.5px; line-height:1.68; }
 .pname .deva{ display:block; color:var(--sindoor); font-size:1rem; margin-top:4px; }
 .plabel{ display:none; }
 .pmrp s{ color:var(--ink-2); }
+.pregular{ display:block; margin:4px 0; font-size:.85rem; color:var(--ink-2); }
+.pours .plabel{ display:block; font-size:.66rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); margin-bottom:2px; }
 .pours b{ font-family:var(--f-display); font-weight:400; font-size:1.6rem; color:var(--ink); margin-right:8px; }
 .pours small{ font-size:.7rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--sindoor); white-space:nowrap; }
 .ptiers{ display:flex; flex-wrap:wrap; gap:8px; }

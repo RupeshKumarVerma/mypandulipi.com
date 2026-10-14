@@ -18,7 +18,7 @@ This version is an automated catalogue/FAQ guide, not a generative AI service. U
 
 Use the existing `tools/prices.py` workflow for the website’s prices. The assistant reads the resulting product cards and price table. Preserve these selectors if redesigning the catalogue:
 
-`FESTIVE_PRICES` contains the active seasonal overrides. `PRODUCTS` retains standard catalogue prices. The generator applies the lower current price to bulk tiers as well, leaves silver editions unchanged, and marks active offers with `data-festive="true"`. Sakhi uses that marker for festive-price enquiries. The downloadable PDF still lists standard catalogue rates; its download links explain that the website has the current festive prices.
+`FESTIVE_PRICES` contains the active seasonal overrides, including silver editions. `PRODUCTS` retains standard catalogue prices, which remain visible alongside festive prices and MRP. The generator applies the lower of the current offer and existing bulk rate to each quantity tier, and marks active offers with `data-festive="true"`. Sakhi uses that marker for festive-price enquiries and reads `.price-regular` to quote the regular selling price. The downloadable PDF still lists standard catalogue rates; its download links explain that the website has the current festive prices.
 
 - Product cards: `#collection .feature` and `#collection .scard`
 - Titles: `h3` / `h4`; prices: `.price-now`, `.price-mrp`

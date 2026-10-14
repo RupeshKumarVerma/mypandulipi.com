@@ -10,10 +10,11 @@ import json, math, re, pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # Keep catalogue rates separate so a seasonal offer can be ended without losing
-# the normal retail or bulk prices. Silver editions have no festive override.
+# the normal retail or bulk prices.
 FESTIVE_PRICES = {
     "chalisa": 99, "aarti": 99, "bhaktamar": 99,
     "sundarkand": 799, "gita": 649,
+    "silver-hanuman": 999, "silver-bhaktamar": 1299,
 }
 
 # key: (name, devanagari, mrp, price, [(qty label, per-piece price), ...])
@@ -69,17 +70,20 @@ def current_tiers(key):
 
 
 def price_block(key):
-    name, deva, mrp, _, _ = PRODUCTS[key]
+    name, deva, mrp, regular, _ = PRODUCTS[key]
     price, tiers = current_price(key), current_tiers(key)
     best = tiers[-1]
     each = " each" if key == "chalisa" else ""
     festive = ' data-festive="true"' if key in FESTIVE_PRICES else ''
     badge = 'Festive offer' if key in FESTIVE_PRICES else f'{off(mrp, price)}% off'
     bulk_label = 'See festive &amp; bulk rates' if key in FESTIVE_PRICES else f'Bulk from {inr(best[1])} per piece'
+    regular_amount = f'<s class="price-regular">{inr(regular)}</s>' if price < regular else f'<span class="price-regular">{inr(regular)}</span>'
     return (
         f'<!-- PRICE:{key} -->'
         f'<div class="price"{festive}><span class="price-now">{inr(price)}{each}</span>'
-        f'<s class="price-mrp">MRP {inr(mrp)}</s><span class="price-off">{badge}</span></div>'
+        f'<span class="price-off">{badge}</span>'
+        f'<span class="price-reference"><span>Regular {regular_amount}</span>'
+        f'<span class="price-mrp">MRP <s>{inr(mrp)}</s></span></span></div>'
         f'<a class="price-bulk" href="bulk.html#price-list">{bulk_label} <span aria-hidden="true">→</span></a>'
         f'<!-- /PRICE -->'
     )
@@ -143,13 +147,15 @@ def update_index():
 
 
 def row(key):
-    name, deva, mrp, _, _ = PRODUCTS[key]
+    name, deva, mrp, regular, _ = PRODUCTS[key]
     price, tiers = current_price(key), current_tiers(key)
     label = 'Festive price' if key in FESTIVE_PRICES else 'Our price'
+    regular_amount = f'<s>{inr(regular)}</s>' if price < regular else inr(regular)
     t = "".join(f'<li><span>{q}</span><b>{inr(v)}</b></li>' for q, v in tiers)
     return (f'<div class="prow"><div class="pname"><b>{name}</b><span class="deva" lang="hi">{deva}</span></div>'
             f'<div class="pmrp"><span class="plabel">MRP</span><s>{inr(mrp)}</s></div>'
-            f'<div class="pours"><span class="plabel">{label}</span><b>{inr(price)}</b><small>{off(mrp, price)}% off</small></div>'
+            f'<div class="pours"><span class="plabel">{label}</span><b>{inr(price)}</b>'
+            f'<span class="pregular">Regular {regular_amount}</span><small>{off(mrp, price)}% off MRP</small></div>'
             f'<ul class="ptiers" aria-label="Bulk price per piece">{t}</ul></div>')
 
 
@@ -160,7 +166,7 @@ def update_bulk():
     silver = "\n".join(row(k) for k in SILVER)
     table = f'''<!-- PRICES -->
     <div class="plist rv">
-      <div class="prow prow--head" aria-hidden="true"><span>Granth</span><span>MRP</span><span>Our price</span><span>Bulk price per piece</span></div>
+      <div class="prow prow--head" aria-hidden="true"><span>Granth</span><span>MRP</span><span>Selling price</span><span>Bulk price per piece</span></div>
 {rows}
       <div class="pgroup"><span>Special premium collection</span><span class="deva" lang="hi">रजत संग्रह</span></div>
 {silver}

@@ -93,7 +93,7 @@
       const image = card.querySelector('img');
       const description = card.querySelector('.feature-copy > p:not(.feature-deva),.scard-body > p');
       const priceKey = (card.innerHTML.match(/<!--\s*PRICE:([\w-]+)/) || [])[1];
-      return { name, price, mrp: amount(card.querySelector('.price-mrp')), festive: !!card.querySelector('.price[data-festive="true"]'), description: text(description), tags: [...card.querySelectorAll('.tag')].map(text), family: family(name), silver: /silver/i.test(name), priceKey, image: image ? site(image.getAttribute('src')) : null };
+      return { name, price, regular: amount(card.querySelector('.price-regular')), mrp: amount(card.querySelector('.price-mrp')), festive: !!card.querySelector('.price[data-festive="true"]'), description: text(description), tags: [...card.querySelectorAll('.tag')].map(text), family: family(name), silver: /silver/i.test(name), priceKey, image: image ? site(image.getAttribute('src')) : null };
     }).filter(p => p.name && Number.isFinite(p.price) && p.price > 0);
   }
   function parseBulk(doc) {
@@ -168,6 +168,7 @@
     const qty = state.quantity;
     let reply = p.name + '\n' + say('Selling price: ', 'विक्रय मूल्य: ') + money(p.price) + say(' per piece', ' प्रति पीस');
     if (p.festive) reply += '\n' + say('Festive season offer', 'त्योहारी सीज़न ऑफर');
+    if (p.regular) reply += '\n' + say('Regular price: ', 'सामान्य मूल्य: ') + money(p.regular);
     if (p.mrp) reply += '\nMRP: ' + money(p.mrp);
     if (!qty) reply += '\n\n' + (p.tags.length ? p.tags.join(' · ') : p.description);
     const tiers = state.tiers[p.priceKey] || [];

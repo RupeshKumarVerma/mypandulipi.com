@@ -33,10 +33,11 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     const reset = () => page.locator('#ps-reset').click();
     await ask('Browse products');
     assert.equal(await page.locator('.ps-bot').last().locator('.ps-product').count(), 13);
-    const singles = [['Hanuman Chalisa',99,249],['Durga Chalisa',99,249],['Shiv Chalisa',99,249],['Lakshmi Chalisa',99,249],['Surya Chalisa',99,249],['Krishna Chalisa',99,249],['Ganesh Chalisa',99,249],['BhagwatGeeta',649,1999],['Sundarkand',799,1999],['Aarti Sangrah',99,299],['Bhaktamar Stotra',99,299],['Silver Hanuman Chalisa',1100,2500],['Silver Bhaktamar',1499,3000]];
-    for (const [name, price, mrp] of singles) {
+    const singles = [['Hanuman Chalisa',99,249,149],['Durga Chalisa',99,249,149],['Shiv Chalisa',99,249,149],['Lakshmi Chalisa',99,249,149],['Surya Chalisa',99,249,149],['Krishna Chalisa',99,249,149],['Ganesh Chalisa',99,249,149],['BhagwatGeeta',649,1999,999],['Sundarkand',799,1999,1099],['Aarti Sangrah',99,299,149],['Bhaktamar Stotra',99,299,199],['Silver Hanuman Chalisa',999,2500,1100],['Silver Bhaktamar',1299,3000,1499]];
+    for (const [name, price, mrp, regular] of singles) {
       const answer = await ask(name);
       assert.ok(answer.includes('Selling price: '+money(price)+' per piece'), name+' selling price');
+      assert.ok(answer.includes('Regular price: '+money(regular)), name+' regular price');
       assert.ok(answer.includes('MRP: '+money(mrp)), name+' MRP');
     }
     const boundaryRates = [[1,99],[9,99],[10,99],[25,99],[26,99],[50,99],[51,99],[100,99],[101,99]];
@@ -44,14 +45,14 @@ const money = n => '₹' + n.toLocaleString('en-IN');
       const answer = await ask(qty+' Hanuman Chalisa');
       assert.ok(answer.includes(qty+' × '+money(rate)+' = '+money(qty*rate)), answer);
     }
-    assert.ok((await ask('10 Silver Hanuman Chalisa')).includes('10 × ₹1,100 = ₹11,000'));
+    assert.ok((await ask('10 Silver Hanuman Chalisa')).includes('10 × ₹999 = ₹9,990'));
     assert.ok((await ask('11 Silver Hanuman Chalisa')).includes('11 × ₹999 = ₹10,989'));
-    assert.ok((await ask('10 Silver Bhaktamar')).includes('10 × ₹1,499 = ₹14,990'));
+    assert.ok((await ask('10 Silver Bhaktamar')).includes('10 × ₹1,299 = ₹12,990'));
     assert.ok((await ask('11 Silver Bhaktamar')).includes('11 × ₹1,199 = ₹13,189'));
     assert.ok((await ask('26 Geeta')).includes('26 × ₹649 = ₹16,874'));
     for (const query of ['festive offer', 'offers', 'त्योहारी ऑफर']) {
       const festive = await ask(query);
-      assert.ok(festive.includes('₹99') && festive.includes('₹799') && festive.includes('₹649'), query);
+      assert.ok(festive.includes('₹99') && festive.includes('₹799') && festive.includes('₹649') && festive.includes('₹999') && festive.includes('₹1,299'), query);
       assert.ok(!festive.includes('₹899'), 'Generic festive enquiry must not be limited to the Navratri combo');
     }
     await ask('English');
