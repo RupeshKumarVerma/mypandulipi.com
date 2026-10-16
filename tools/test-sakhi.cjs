@@ -5,14 +5,21 @@
 const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const base = process.env.SAKHI_BASE_URL || 'http://127.0.0.1:8765/';
-const money = n => '₹' + n.toLocaleString('en-IN');
 (async () => {
   const browser = await chromium.launch({headless:true, executablePath:process.env.CHROMIUM_EXECUTABLE || undefined, args:['--no-sandbox','--disable-dev-shm-usage']});
   try {
-    const page = await browser.newPage({viewport:{width:1440,height:1000}});
+    const page = await browser.newPage({viewport:{width:1440,height:1000}, reducedMotion:'reduce'});
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     await page.goto(base, {waitUntil:'domcontentloaded'});
+    assert.equal(await page.locator('#collection .feature, #collection .scard:not(.scard--more)').count(), 13);
+    assert.equal(await page.locator('.price, .price-bulk, #bulk-pricing-data').count(), 0);
+    assert.ok(!/₹|MRP|Selling price/.test(await page.locator('body').innerText()));
+    assert.equal(await page.locator('#special-offer img').getAttribute('src'), 'assets/durga-chalisa.jpg');
+    const graph = await page.locator('script[type="application/ld+json"]').evaluate(n => JSON.parse(n.textContent)['@graph']);
+    assert.ok(graph.filter(p => p['@type'] === 'Product').every(p => !p.offers));
+    const offerLink = new URL(await page.locator('.offer-order').getAttribute('href'));
+    assert.ok(!/₹|Rs\s*\d|INR\s*\d/i.test(offerLink.searchParams.get('text')));
     await page.locator('#ps-launch').click();
     const ask = async message => {
       await page.locator('#ps-input').fill(message);
@@ -28,36 +35,28 @@ const money = n => '₹' + n.toLocaleString('en-IN');
         assert.equal(link.target,'_blank');
         assert.ok(link.rel.includes('noopener'));
       }
-      return await page.locator('.ps-bot').last().innerText();
+      const answer = await page.locator('.ps-bot').last().innerText();
+      assert.ok(!/₹|MRP|Selling price|Regular price|\d[\d,]*% off|Rs\.?\s*\d/.test(answer), 'Meera must not quote a product price: '+answer);
+      return answer;
     };
     const reset = () => page.locator('#ps-reset').click();
     await ask('Browse products');
     assert.equal(await page.locator('.ps-bot').last().locator('.ps-product').count(), 13);
-    const singles = [['Hanuman Chalisa',99,249,149],['Durga Chalisa',99,249,149],['Shiv Chalisa',99,249,149],['Lakshmi Chalisa',99,249,149],['Surya Chalisa',99,249,149],['Krishna Chalisa',99,249,149],['Ganesh Chalisa',99,249,149],['BhagwatGeeta',649,1999,999],['Sundarkand',799,1999,1099],['Aarti Sangrah',99,299,149],['Bhaktamar Stotra',99,299,199],['Silver Hanuman Chalisa',999,2500,1100],['Silver Bhaktamar',1299,3000,1499]];
-    for (const [name, price, mrp, regular] of singles) {
+    const singles = ['Hanuman Chalisa','Durga Chalisa','Shiv Chalisa','Lakshmi Chalisa','Surya Chalisa','Krishna Chalisa','Ganesh Chalisa','BhagwatGeeta','Sundarkand','Aarti Sangrah','Bhaktamar Stotra','Silver Hanuman Chalisa','Silver Bhaktamar'];
+    for (const name of singles) {
       const answer = await ask(name);
-      assert.ok(answer.includes('Selling price: '+money(price)+' per piece'), name+' selling price');
-      assert.ok(answer.includes('Regular price: '+money(regular)), name+' regular price');
-      assert.ok(answer.includes('MRP: '+money(mrp)), name+' MRP');
+      assert.ok(answer.includes('For current pricing and availability'), name+' enquiry');
+      assert.ok(answer.includes('How many copies'), name+' quantity follow-up');
     }
-    const boundaryRates = [[1,99],[9,99],[10,99],[25,99],[26,99],[50,99],[51,99],[100,99],[101,99]];
-    for (const [qty, rate] of boundaryRates) {
-      const answer = await ask(qty+' Hanuman Chalisa');
-      assert.ok(answer.includes(qty+' × '+money(rate)+' = '+money(qty*rate)), answer);
+    for (const query of ['10 Hanuman Chalisa', '11 Silver Bhaktamar', '26 Geeta']) {
+      assert.ok((await ask(query)).includes('Quantity: '+query.split(' ')[0]), query);
     }
-    assert.ok((await ask('10 Silver Hanuman Chalisa')).includes('10 × ₹999 = ₹9,990'));
-    assert.ok((await ask('11 Silver Hanuman Chalisa')).includes('11 × ₹999 = ₹10,989'));
-    assert.ok((await ask('10 Silver Bhaktamar')).includes('10 × ₹1,299 = ₹12,990'));
-    assert.ok((await ask('11 Silver Bhaktamar')).includes('11 × ₹1,199 = ₹13,189'));
-    assert.ok((await ask('26 Geeta')).includes('26 × ₹649 = ₹16,874'));
     for (const query of ['festive offer', 'offers', 'त्योहारी ऑफर']) {
-      const festive = await ask(query);
-      assert.ok(festive.includes('₹99') && festive.includes('₹799') && festive.includes('₹649') && festive.includes('₹999') && festive.includes('₹1,299'), query);
-      assert.ok(!festive.includes('₹899'), 'Generic festive enquiry must not be limited to the Navratri combo');
+      assert.ok((await ask(query)).includes('WhatsApp'), query);
     }
     await ask('English');
-    assert.ok((await ask('10 Durga Chalisa')).includes('combo product total is ₹899'));
-    assert.ok((await ask('Navratri offer')).includes('Save ₹591'));
+    assert.ok((await ask('10 Durga Chalisa')).includes('Quantity: 10'));
+    assert.ok((await ask('Navratri offer')).includes('10 Durga Chalisa'));
     let wa = new URL(await page.locator('#ps-whatsapp').getAttribute('href'));
     assert.equal(wa.hostname,'wa.me'); assert.equal(wa.pathname,'/918982659046');
     assert.ok(wa.searchParams.get('text').includes('Quantity: 10'));
@@ -73,14 +72,16 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     prefill = new URL(await page.locator('#ps-whatsapp').getAttribute('href')).searchParams.get('text');
     assert.ok(prefill.includes('Product: Sundarkand Pandulipi') && prefill.includes('Enquiry: delivery'));
     await reset(); await ask('25 copies');
-    assert.ok((await ask('Bhaktamar Stotra')).includes('25 × ₹99 = ₹2,475'), 'Quantity-first follow-up');
+    assert.ok((await ask('Bhaktamar Stotra')).includes('Quantity: 25'), 'Quantity-first follow-up');
     await reset(); await ask('Gift suggestions');
     assert.ok((await ask('Corporate gifting')).includes('budget per gift'));
     await ask('200');
-    assert.equal(await page.locator('.ps-bot').last().locator('.ps-product').count(),9,'Budget follow-up is not a quantity');
+    assert.ok((await page.locator('.ps-bot').last().innerText()).includes('include your budget'));
+    assert.ok(!new URL(await page.locator('#ps-whatsapp').getAttribute('href')).searchParams.get('text').includes('Quantity: 200'));
     await ask('Hanuman Chalisa'); await ask('10 copies');
     wa = new URL(await page.locator('#ps-whatsapp').getAttribute('href'));
     assert.ok(wa.searchParams.get('text').includes('Purpose: Corporate gifting'));
+    assert.ok(wa.searchParams.get('text').includes('Customer budget per gift (INR): 200'));
     assert.ok((await ask('yes')).includes('WhatsApp'));
     assert.ok((await ask('0 pieces')).includes('whole-number'));
     assert.ok((await ask('1.5 copies')).includes('whole-number'));
@@ -90,7 +91,7 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     assert.ok((await ask('Cash on delivery')).includes('payment options'));
     assert.ok((await ask('return policy')).includes('confirmed return policy'));
     assert.ok((await ask('हिंदी')).includes('मीरा'));
-    assert.ok((await ask('१० हनुमान चालीसा')).includes('10 × ₹99 = ₹990'));
+    assert.ok((await ask('१० हनुमान चालीसा')).includes('मात्रा: 10'));
     await ask('English');
     assert.ok((await ask('the weather tomorrow')).includes('don’t have a confirmed answer'));
     await ask('<img src=x onerror="window.sakhiXss=1">');
@@ -116,8 +117,10 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     }
     for (const path of ['bulk.html','blog.html','who-we-are.html']) {
       await page.goto(new URL(path,base).href,{waitUntil:'domcontentloaded'});
+      assert.equal(await page.locator('.price, .plist, #bulk-pricing-data').count(), 0);
+      assert.ok(!/₹|MRP|Selling price/.test(await page.locator('body').innerText()),path);
       await page.locator('#ps-launch').click();
-      assert.ok((await ask('Sundarkand')).includes('Selling price: ₹799 per piece'), path);
+      assert.ok((await ask('Sundarkand')).includes('For current pricing and availability'), path);
     }
     // An unavailable catalogue must never produce an invented price.
     await page.route('**/index.html',route=>route.abort());
@@ -127,6 +130,6 @@ const money = n => '₹' + n.toLocaleString('en-IN');
     assert.ok((await ask('Browse products')).includes('couldn’t load the catalogue'));
     assert.ok((await page.locator('#ps-whatsapp').getAttribute('href')).startsWith('https://wa.me/918982659046'));
     assert.deepEqual(errors,[]);
-    console.log('PASS: catalogue, prices, tiers, offer, Hindi, follow-ups, WhatsApp, input safety, mobile, keyboard, page integration and network failure.');
+    console.log('PASS: price-free catalogue, offer enquiries, Hindi, follow-ups, WhatsApp, input safety, mobile, keyboard, page integration and network failure.');
   } finally { await browser.close(); }
 })().catch(e=>{console.error(e);process.exitCode=1;});

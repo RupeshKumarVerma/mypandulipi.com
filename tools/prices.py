@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Single source of truth for MyPandulipi website prices.
 
-Run `python3 tools/prices.py` after changing any price below. It rewrites the
-price blocks on index.html and the price list on bulk.html (between the
-PRICES:... markers) and the Product offers in the homepage structured data.
+Public prices are disabled. Running this script removes generated prices and
+Product offers instead of publishing them. The previous rates are retained
+below for reference; changing them does not enable website price displays.
 """
 import json, math, re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+DISPLAY_PRICES = False
 
 # Keep catalogue rates separate so a seasonal offer can be ended without losing
 # the normal retail or bulk prices.
@@ -94,6 +95,16 @@ def update_index():
     html = re.sub(r"\n[ \t]*<!-- PRICE:[^>]*-->.*?<!-- /PRICE -->", "", html, flags=re.S)
     html = re.sub(r"\n[ \t]+\n(?=[ \t]*<div class=\"(buy rv|scard-foot)\">)", "\n", html)
 
+    if not DISPLAY_PRICES:
+        m = re.search(r'(<script type="application/ld\+json">)(.*?)(</script>)', html, re.S)
+        data = json.loads(m.group(2))
+        for entry in data.get("@graph", []):
+            if entry.get("@type") == "Product":
+                entry.pop("offers", None)
+        html = html[:m.start(2)] + "\n" + json.dumps(data, ensure_ascii=False, indent=2) + "\n" + html[m.end(2):]
+        p.write_text(html)
+        return
+
     # Feature blocks (Sundarkand, Gita): insert before <div class="buy rv">
     def feat(m):
         block = m.group(0)
@@ -159,6 +170,10 @@ def row(key):
 def update_bulk():
     p = ROOT / "bulk.html"
     html = p.read_text()
+    if not DISPLAY_PRICES:
+        html = re.sub(r"[ \t]*<!-- PRICES -->.*?<!-- /PRICES -->\n?", "", html, flags=re.S)
+        p.write_text(html)
+        return
     rows = "\n".join(row(k) for k in REGULAR)
     silver = "\n".join(row(k) for k in SILVER)
     # Preserve existing quantity calculations for Meera without displaying a
@@ -181,4 +196,4 @@ def update_bulk():
 if __name__ == "__main__":
     update_index()
     update_bulk()
-    print("Prices updated.")
+    print("Prices updated." if DISPLAY_PRICES else "Public prices removed; enquiries go to WhatsApp.")

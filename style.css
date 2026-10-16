@@ -987,13 +987,8 @@ body{ font-size:15.5px; line-height:1.68; }
 .offer-copy h3{ font-family:var(--f-display); font-size:clamp(1.7rem, 2.7vw, 2.35rem); font-weight:300; line-height:1.15; margin-bottom:18px; }
 .offer-copy h3 em{ color:var(--sindoor); }
 .offer-description{ color:var(--ink-2); font-size:.98rem; max-width:43ch; margin-bottom:24px; }
-.offer-pricing{ padding:20px 0; border-top:1px solid var(--line-l); border-bottom:1px solid var(--line-l); }
-.offer-pack{ display:block; font-size:.82rem; font-weight:500; color:var(--ink-2); margin-bottom:8px; }
-.offer-price-row{ display:flex; align-items:baseline; flex-wrap:wrap; gap:10px 20px; }
-.offer-price{ font-family:var(--f-display); font-size:clamp(2.1rem, 3.4vw, 2.8rem); font-weight:400; line-height:1.2; color:var(--ink); font-variant-numeric:lining-nums; }
-.offer-regular{ font-size:.84rem; color:var(--ink-2); }
-.offer-regular s{ margin-left:4px; text-decoration-thickness:1px; }
-.offer-saving{ display:block; color:var(--peacock); font-size:.85rem; font-weight:600; margin-top:6px; }
+.offer-details{ padding:20px 0; border-top:1px solid var(--line-l); border-bottom:1px solid var(--line-l); }
+.offer-pack{ display:block; font-size:.82rem; font-weight:500; color:var(--ink-2); }
 .offer-coupon{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:20px 0; font-size:.88rem; color:var(--ink-2); }
 .offer-coupon strong{ border:1px dashed rgba(169,54,32,.4); border-radius:8px; padding:5px 14px; font-weight:600; color:var(--sindoor-2); background:var(--paper-3); letter-spacing:.04em; user-select:all; }
 .offer-order{ max-width:100%; white-space:normal; text-align:center; }
