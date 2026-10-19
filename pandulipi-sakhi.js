@@ -35,7 +35,7 @@
     return message + '\nPlease confirm availability, final pricing and delivery charges.';
   }
   const css = document.createElement('link');
-  css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=3'); document.head.append(css);
+  css.rel = 'stylesheet'; css.href = site('pandulipi-sakhi.css?v=4'); document.head.append(css);
   const root = document.createElement('div'); root.id = 'pandulipi-sakhi-root';
   root.innerHTML = `
     <button id="ps-launch" type="button" aria-expanded="false" aria-controls="ps-panel" aria-label="Open Meera shopping assistant">
@@ -100,6 +100,12 @@
   }
   function loadCatalogue() {
     if (state.loaded) return Promise.resolve();
+    if (Array.isArray(window.MP_CATALOGUE) && window.MP_CATALOGUE.length) {
+      state.products = window.MP_CATALOGUE.map(p => ({ name: p.name, description: p.description, tags: p.tags, family: family(p.name), silver: p.category === 'silver', image: site(p.images[0]) }));
+      state.offer = {quantity: 10, coupon: 'Navratri'};
+      state.loaded = true;
+      return Promise.resolve();
+    }
     if (state.loading) return state.loading;
     state.loading = (async () => {
       try {
