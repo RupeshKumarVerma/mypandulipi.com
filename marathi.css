@@ -4,10 +4,8 @@
 .stock--marathi { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 820px; margin-inline: auto; }
 .marathi-lede { max-width: 65ch; margin: -8px 0 30px; color: var(--ink-2); line-height: 1.8; }
 .marathi-photo { display: grid; place-items: center; aspect-ratio: 1; overflow: hidden; background: #f6ead8; border-radius: 12px; }
-/* Frame the approved catalogue's product photograph without changing its artwork. */
-.marathi-photo-window { display: block; width: 100%; aspect-ratio: 1122 / 490; position: relative; overflow: hidden; }
-.marathi-photo .marathi-photo-window img { position: absolute; top: -87%; left: 0; width: 100%; height: auto; max-width: none; aspect-ratio: auto; border-radius: 0; object-fit: initial; }
-.marathi-photo--ganesh .marathi-photo-window img { top: -92%; }
+.marathi-photo-window { display: block; width: 100%; }
+.marathi-photo .marathi-photo-window img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 0; }
 .stock--marathi .marathi-photo { border-radius: 0; }
 .marathi-card-language { color: var(--sindoor); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
 .stock--marathi .scard-body { display: flex; flex-direction: column; }
