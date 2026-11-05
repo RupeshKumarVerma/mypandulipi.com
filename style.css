@@ -1070,3 +1070,10 @@ body{ font-size:15.5px; line-height:1.68; }
   .catdl-actions .btn{ width:100%; }
   .catdl-meta{ width:100%; text-align:center; }
 }
+
+
+/* Keep the expanded stock grid balanced beside the Yamunashtakam card. */
+#yamunashtakam{ scroll-margin-top:100px; }
+@media (min-width:981px){
+  #yamunashtakam + .scard--more.scard--wide{ grid-column:span 2; flex-direction:column; }
+}
