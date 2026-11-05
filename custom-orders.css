@@ -1,0 +1,28 @@
+/* A compact custom-printing feature within the existing ivory collection. */
+.custom-orders { margin-top: 88px; scroll-margin-top: 110px; }
+.custom-orders-card { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; overflow: hidden; background: var(--paper); border: 1px solid var(--line-l); border-radius: 20px; }
+.custom-orders-visual { margin: 0; padding: 24px; }
+.custom-orders-visual a { display: block; border-radius: 12px; overflow: hidden; }
+.custom-orders-visual img { display: block; width: 100%; height: auto; }
+.custom-orders-visual figcaption { margin-top: 10px; text-align: center; font-size: .78rem; color: var(--ink-2); }
+.custom-orders-copy { padding: 36px 36px 36px 16px; }
+.custom-orders .custom-orders-title { font-family: var(--f-display); font-size: clamp(1.6rem, 2.5vw, 2rem); font-weight: 400; line-height: 1.2; margin: 0 0 20px; }
+.custom-orders .custom-orders-product { font-family: var(--f-display); font-size: 1.25rem; font-weight: 400; line-height: 1.35; margin: 0 0 4px; }
+.custom-orders .custom-orders-includes { color: var(--sindoor); font-size: .88rem; margin: 0 0 18px; }
+.custom-orders .custom-orders-description { font-size: .94rem; color: var(--ink-2); line-height: 1.7; margin: 0 0 20px; }
+.custom-orders-terms { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0 0 24px; }
+.custom-orders-terms li { border: 1px solid var(--line-l); border-radius: 10px; padding: 9px 12px; font-size: .82rem; line-height: 1.5; }
+.custom-orders-terms strong { color: var(--sindoor); font-weight: 600; }
+.custom-orders .btn { white-space: normal; text-align: center; }
+.custom-orders-quick-link { display: inline-flex; margin: 18px 0 0 24px; }
+.catalogue-main .custom-orders { margin: 32px 0 40px; }
+@media (max-width: 760px) {
+  .custom-orders-card { grid-template-columns: 1fr; }
+  .custom-orders-visual { padding: 18px 18px 0; }
+  .custom-orders-copy { padding: 24px; }
+  .custom-orders { margin-top: 56px; }
+}
+@media (max-width: 480px) {
+  .custom-orders-quick-link { display: flex; margin-left: 0; }
+  .custom-orders-copy { padding: 22px 18px; }
+}
