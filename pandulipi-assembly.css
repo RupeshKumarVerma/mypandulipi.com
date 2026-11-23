@@ -6,7 +6,7 @@
 .craft-kicker{margin:0;color:#82532e;font-size:.875rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;}
 .craft-skip{font-size:.875rem;color:#634c38;text-decoration:underline;text-underline-offset:4px;flex-shrink:0;}
 .craft-skip:hover{color:#9d3b25;}
-.craft-layout{display:grid;grid-template-columns:minmax(230px,.8fr) minmax(0,1.55fr);grid-template-rows:1fr 1fr;column-gap:20px;align-items:center;min-height:480px;}
+.craft-layout{display:grid;grid-template-columns:minmax(230px,.65fr) minmax(0,1.85fr);grid-template-rows:1fr 1fr;column-gap:20px;align-items:center;min-height:480px;}
 .craft-intro{grid-column:1;grid-row:1;align-self:end;padding-top:22px;}
 .craft-intro h2{font-family:var(--f-display,Georgia,serif);font-size:clamp(2rem,3.2vw,3.15rem);font-weight:400;line-height:1.12;letter-spacing:-.035em;max-width:12ch;}
 .craft-intro h2 em{color:#9d5430;font-weight:300;}
