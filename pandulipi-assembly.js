@@ -51,7 +51,9 @@
     var threadP = range(p, .735, .955);
     thread.style.opacity = threadP > 0 ? '1' : '0';
     cords.forEach(function (path, i) {
-      var draw = ease(range(threadP, i % 2 ? .12 : 0, i % 2 ? 1 : .88));
+      var start = Number(path.getAttribute('data-cord-start') || 0);
+      var end = Number(path.getAttribute('data-cord-end') || 1);
+      var draw = ease(range(threadP, start, end));
       path.style.strokeDasharray = cordLengths[i].toFixed(2);
       path.style.strokeDashoffset = (cordLengths[i] * (1 - draw)).toFixed(2);
     });
