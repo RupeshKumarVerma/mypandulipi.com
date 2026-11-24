@@ -13,14 +13,16 @@
   var heading = story.querySelector('[data-craft-heading]');
   var description = story.querySelector('[data-craft-description]');
   var buttons = Array.prototype.slice.call(story.querySelectorAll('[data-craft-step]'));
+  var hint = story.querySelector('[data-craft-hint]');
   var header = document.querySelector('.hdr');
+  var notice = document.querySelector('.notice');
   if (!pin || !bottom || !top || pages.length !== 12 || !thread || !heading || !description || buttons.length !== 4) return;
   var media = window.matchMedia('(prefers-reduced-motion: reduce)');
   var stages = [
-    ['A foundation in wood.', 'The lower wooden cover settles into place, ready to hold the scripture.'],
-    ['Wisdom, page by page.', 'The printed leaves come together in a carefully aligned stack.'],
-    ['Protected by tradition.', 'A second wooden cover rests over the pages, completing the form.'],
-    ['Bound by devotion.', 'Thread passes through both holes and ties the covers and pages together.']
+    ['A foundation in wood.', 'Every timeless story begins with a beautiful foundation.'],
+    ['Wisdom, page by page.', 'Sacred words come together, one printed leaf at a time.'],
+    ['Protected by tradition.', 'A wooden cover, finished with the MyPandulipi mark.'],
+    ['Bound by devotion.', 'Two wooden covers. Sacred words. A thread of tradition.']
   ];
   var ready = false, frame = 0, activeStage = -1, headerHeight = 92;
   var lastProgress = -1, printing = false;
@@ -40,14 +42,14 @@
     lastProgress = p;
     // Four clear acts: lower board, twelve leaves, upper board, threaded binding.
     var b = ease(range(p, .015, .21));
-    move(bottom, -150 * (1 - b), 1);
+    move(bottom, -90 * (1 - b), 1);
     pages.forEach(function (page, i) {
       var start = .225 + i * .014;
       var t = range(p, start, start + .105);
-      move(page, -245 * (1 - ease(t)), range(t, 0, .2));
+      move(page, -115 * (1 - ease(t)), range(t, 0, .2));
     });
     var t = range(p, .525, .715);
-    move(top, -260 * (1 - ease(t)), range(t, 0, .15));
+    move(top, -115 * (1 - ease(t)), range(t, 0, .15));
     var threadP = range(p, .735, .955);
     thread.style.opacity = threadP > 0 ? '1' : '0';
     cords.forEach(function (path, i) {
@@ -75,6 +77,7 @@
       button.parentNode.style.setProperty('--step-progress', staticMode ? '1' : range(p, stops[i], stops[i+1]).toFixed(4));
     });
     story.classList.toggle('is-complete', p >= .985);
+    if (hint) hint.textContent = p >= .985 ? 'Keep scrolling to discover the collection' : 'Scroll to bring tradition to life';
   }
   function update() {
     frame = 0;
@@ -89,7 +92,8 @@
   function configure() {
     headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
     story.style.setProperty('--craft-top', headerHeight + 'px');
-    var minimumHeight = window.innerWidth <= 900 ? 650 : 540;
+    story.style.setProperty('--craft-notice', (notice ? Math.ceil(notice.getBoundingClientRect().height) : 0) + 'px');
+    var minimumHeight = 650;
     ready = !media.matches && window.innerHeight >= minimumHeight && !printing;
     story.classList.toggle('is-scroll-ready', ready);
     buttons.forEach(function (button) { button.disabled = !ready; });
